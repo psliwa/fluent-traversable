@@ -1,0 +1,22 @@
+{
+    "name": "ps/fluent-traversable",
+    "description": "Support for operating on collections and arrays by functional way. Inspired by guava's FluentIterable, java8 Stream framework and scala stuff",
+    "type": "library",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Piotr Sliwa",
+            "email": "peter.pl7@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "FluentTraversable": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.3.3",
+        "phpoption/phpoption": "~1.4.0"
+    }
+}

@@ -1,0 +1,5 @@
+# Fluent Traversable
+
+# License
+
+**MIT**
