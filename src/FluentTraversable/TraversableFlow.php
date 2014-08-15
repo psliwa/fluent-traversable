@@ -158,4 +158,11 @@ interface TraversableFlow
      * @return mixed
      */
     public function reduce($func);
+
+    /**
+     * @param $identity
+     * @param $biOperation
+     * @return mixed
+     */
+    public function reduceFromIdentity($identity, $biOperation);
 } 

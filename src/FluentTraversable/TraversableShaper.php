@@ -350,6 +350,21 @@ class TraversableShaper implements TraversableFlow
         return $this;
     }
 
+
+    /**
+     * @param $identity
+     * @param $biOperation
+     * @return TraversableShaper
+     */
+    public function reduceFromIdentity($identity, $biOperation)
+    {
+        $this->markTerminalOperation(__FUNCTION__);
+
+        $this->operations[] = array(__FUNCTION__, func_get_args());
+
+        return $this;
+    }
+
     /**
      * @param $traversable
      * @return mixed Depends on shaper instrumentation

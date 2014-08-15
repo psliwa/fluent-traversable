@@ -422,4 +422,11 @@ class FluentTraversable implements TraversableFlow
     {
         return call_user_func($collector, $this->elements);
     }
+
+    public function each($func)
+    {
+        foreach($this->elements as $value) {
+            call_user_func($func, $value);
+        }
+    }
 }
