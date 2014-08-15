@@ -3,6 +3,8 @@
 
 namespace FluentTraversable;
 
+use PhpOption\Option;
+
 class TraversableShaperTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -50,6 +52,24 @@ class TraversableShaperTest extends \PHPUnit_Framework_TestCase
         TraversableShaper::create()
             ->toArray()
             ->map('strtolower');
+    }
+
+    /**
+     * @test
+     */
+    public function defineShaper_executeTerminalOpWithOptionAsResult()
+    {
+        $max = TraversableShaper::create();
+        $max
+            ->max()
+            ->map(function($value){
+                return 'max: '.$value;
+            })
+            ->orElse(Option::fromValue('max not found'))
+            ->get();
+
+        $this->assertEquals('max: 5', $max->apply(array(1, 5, 3)));
+        $this->assertEquals('max not found', $max->apply(array()));
     }
 }
  

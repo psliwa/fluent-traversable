@@ -13,6 +13,11 @@ class Puppet implements \ArrayAccess
         return new self();
     }
 
+    public static function object()
+    {
+        return self::record();
+    }
+
     public function play($object)
     {
         return $this($object);

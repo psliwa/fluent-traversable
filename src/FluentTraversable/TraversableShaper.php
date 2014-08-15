@@ -4,6 +4,8 @@
 namespace FluentTraversable;
 
 
+use PhpOption\Option;
+
 class TraversableShaper implements TraversableFlow
 {
     private $operations = array();
@@ -226,7 +228,7 @@ class TraversableShaper implements TraversableFlow
 
     /**
      * @param $comparator
-     * @return TraversableShaper
+     * @return Option
      */
     public function max($comparator = null)
     {
@@ -234,12 +236,23 @@ class TraversableShaper implements TraversableFlow
 
         $this->operations[] = array(__FUNCTION__, func_get_args());
 
-        return $this;
+        return $this->optionPuppet();
+    }
+
+    /**
+     * @return Option
+     */
+    private function optionPuppet()
+    {
+        $puppet = Puppet::record();
+        $this->operations[] = $puppet;
+
+        return $puppet;
     }
 
     /**
      * @param $comparator
-     * @return TraversableShaper
+     * @return Option
      */
     public function min($comparator = null)
     {
@@ -247,12 +260,12 @@ class TraversableShaper implements TraversableFlow
 
         $this->operations[] = array(__FUNCTION__, func_get_args());
 
-        return $this;
+        return $this->optionPuppet();
     }
 
     /**
      * @param $func
-     * @return TraversableShaper
+     * @return Option
      */
     public function firstMatch($func)
     {
@@ -260,7 +273,7 @@ class TraversableShaper implements TraversableFlow
 
         $this->operations[] = array(__FUNCTION__, func_get_args());
 
-        return $this;
+        return $this->optionPuppet();
     }
 
     /**
@@ -314,7 +327,7 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @return TraversableShaper
+     * @return Option
      */
     public function first()
     {
@@ -322,11 +335,11 @@ class TraversableShaper implements TraversableFlow
 
         $this->operations[] = array(__FUNCTION__, func_get_args());
 
-        return $this;
+        return $this->optionPuppet();
     }
 
     /**
-     * @return TraversableShaper
+     * @return Option
      */
     public function last()
     {
@@ -334,12 +347,12 @@ class TraversableShaper implements TraversableFlow
 
         $this->operations[] = array(__FUNCTION__, func_get_args());
 
-        return $this;
+        return $this->optionPuppet();
     }
 
     /**
      * @param $func
-     * @return TraversableShaper
+     * @return Option
      */
     public function reduce($func)
     {
@@ -347,7 +360,7 @@ class TraversableShaper implements TraversableFlow
 
         $this->operations[] = array(__FUNCTION__, func_get_args());
 
-        return $this;
+        return $this->optionPuppet();
     }
 
 
@@ -374,9 +387,13 @@ class TraversableShaper implements TraversableFlow
         $result = FluentTraversable::from($traversable);
 
         foreach($this->operations as $operation) {
-            list($method, $args) = $operation;
+            if($operation instanceof Puppet) {
+                $result = $operation($result);
+            } else {
+                list($method, $args) = $operation;
 
-            $result = call_user_func_array(array($result, $method), $args);
+                $result = call_user_func_array(array($result, $method), $args);
+            }
         }
 
         return $result;

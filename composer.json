@@ -13,7 +13,10 @@
     "autoload": {
         "psr-0": {
             "FluentTraversable": "src/"
-        }
+        },
+        "files": [
+            "src/FluentTraversable/functions.php"
+        ]
     },
     "require": {
         "php": ">=5.3.3",

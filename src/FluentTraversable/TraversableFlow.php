@@ -3,6 +3,8 @@
 
 namespace FluentTraversable;
 
+use PhpOption\Option;
+
 interface TraversableFlow
 {
     //intermediate operations
@@ -105,19 +107,19 @@ interface TraversableFlow
 
     /**
      * @param $comparator
-     * @return mixed
+     * @return Option
      */
     public function max($comparator = null);
 
     /**
      * @param $comparator
-     * @return mixed
+     * @return Option
      */
     public function min($comparator = null);
 
     /**
      * @param $func
-     * @return mixed
+     * @return Option
      */
     public function firstMatch($func);
 
@@ -144,18 +146,18 @@ interface TraversableFlow
     public function join($separator);
 
     /**
-     * @return mixed
+     * @return Option
      */
     public function first();
 
     /**
-     * @return mixed
+     * @return Option
      */
     public function last();
 
     /**
      * @param $func
-     * @return mixed
+     * @return Option
      */
     public function reduce($func);
 
