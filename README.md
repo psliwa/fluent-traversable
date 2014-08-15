@@ -168,6 +168,7 @@ There is an example:
 
     $maxPrinter
         ->max()
+        //"max" (as same as firstMatch) returns Option, because there is possibility given array is empty
         ->map(function($value){
             return 'max: '.$value;
         })
@@ -213,7 +214,8 @@ Example:
 ``
 
 `Puppet` supports property access, array access and method calls with arguments. It was created to simplify `map` and
-`flatMap` operations in `FluentTraversable`, but maybe you will find another application for `Puppet`. 
+`flatMap` operations in `FluentTraversable` and is also used internally by `TraversableShaper`, but maybe you will find 
+another application for `Puppet`. 
 
 Puppet has two factory methods: `record` and `object` - those methods are the same, `object` method was created only for 
 semantics purpose. There is also `FluentTraversable\object` function, that creates `Puppet` instance.
@@ -221,7 +223,7 @@ semantics purpose. There is also `FluentTraversable\object` function, that creat
 Puppet was inspired by
 [Extractor class](https://github.com/letsdrink/ouzo-utils/blob/master/src/Ouzo/Utilities/Extractor.php) of 
 [ouzo-utils](https://github.com/letsdrink/ouzo-utils) library. `FluentTraversable` doesn't use `Extractor` class, because 
-in this library is a lot of stuff that was not been used.
+in this library is a lot of stuff that would not be used.
 
 <a name="contri"></a>
 ## Contribution
