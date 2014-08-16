@@ -1,4 +1,4 @@
-**IMPORTANT**: This library is in experimental state, API can still change.
+**IMPORTANT**: This library is not stable yet, API can still change.
 
 # Fluent Traversable
 
@@ -63,41 +63,42 @@ The same code using `FluentTraversable`:
 
     //some imports
     use FluentTraversable\FluentTraversable;
-    use FluentTraversable\Predicate;
-    use FluentTraversable\Puppet as o;
+    use FluentTraversable\Predicate as is;
+    use FluentTraversable\Puppet as the;
 
     $books = array(/* some books */);
     
     $emails = FluentTraversable::from($books)
-        ->filter(Predicate::lt('releaseDate', 2007))
-        ->flatMap(o::object()->getAuthors())
-        ->filter(Predicate::eq('sex', 'male'))
-        ->map(o::object()->getEmail())
-        ->filter(Predicate::notNull())
+        ->filter(is::lt('releaseDate', 2007))
+        ->flatMap(the::object()->getAuthors())
+        ->filter(is::eq('sex', 'male'))
+        ->map(the::object()->getEmail())
+        ->filter(is::notNull())
         ->toArray();       
 
 ``
 
 There are no loops, if statements, it looks straightforward, flow is clear and explicit (when you now what `filter`, 
-`flatMap`, `map` etc methods are doing - I said before the basics functional programming patters are needed ;)).
+`flatMap`, `map` etc methods are doing - as I said before the basics functional programming patters are needed ;)).
 
-`Predicate` class is factory for closures that have one argument and evaluate it to boolean value. There are `lt`, `gt`, 
-`eq`, `not` etc methods. Closures in php are very lengthy, you should write function keyword, curly braces, return 
-statement, semicolon etc. Closure is multiline (yes, I now it can be written in single line, but it would be unreadable),
-so it is no very compact. To handle simple predicate cases, you might use `Predicate` class, but you haven't to ;)
+`Predicate` class (aliased to `is` in example) is factory for closures that have one argument and evaluate it to boolean 
+value. There are `lt`, `gt`, `eq`, `not` etc methods. Closures in php are very lengthy, you have to write `function` 
+keyword, curly braces, return statement, semicolon etc - a lot of syntax noise. Closure is multiline (yes, I now it can 
+be written in single line, but it would be unreadable), so it is no very compact. To handle simple predicate cases, you 
+might use `Predicate` class, but you haven't to ;)
 
-`o::object()->getAuthors()` also is a shortcut for closures, `o::object()` is as same as argument in the closure.
-``->map(o::object()->getEmail())`` is equivalent to closure:
+`the::object()->getAuthors()` also is a shortcut for closures, `the::object()` is as same as argument in the closure.
+`the::object()->getEmail()` is semantic equivalent to closure:
 
 ``php
 
-    ->map(function($object){
+    function($object){
         return $object->getEmail();
-    })
+    }
 
 ``
 
-What is ``o::object()``? I will tell you in [Puppet](#puppet) section ;)
+What is `the::object()`? I will tell you in [Puppet](#puppet) section ;)
 
 `FluentTraversable` has a lot of useful methods: `map`, `flatMap`, `filter`, `unique`, `group`, `order`, `allMatch`,
 `anyMatch`, `noneMatch`, `firstMatch`, `max`, `min`, `reduce`, `toArray`, `toMap` and more. All that methods belong to
@@ -129,16 +130,14 @@ Example:
 ``php
 
     FluentTraversable::from($books)
-        ->firstMatch(function($book){
-            return $book->getAuthor()->getName() === 'Stephen King';
-        })
+        ->firstMatch(is::eq('author.name', 'Stephen King'))
         //there is Option instance, you can transform value (thanks to map) if this value exists
         ->map(function($book){
             return 'Found book: '.$book->getTitle();
         })
         //provide default value if book wasn't found
         ->orElse(Option::fromValue('Not found any book...'))
-        //print result to stdout
+        //print result to stdout thanks to Option::map method
         ->map('printf')
         //or you can call "->get()" and assign to variable, it is safe because you provided default value by "orElse"
         ;
@@ -198,7 +197,7 @@ doesn't need array when object is created and can be invoked multiple times with
 
 ## Puppet
 
-Puppet is a very small (less than 100 lines of code) class, but it is very powerful. We have used Puppet already in
+Puppet is a very small (less than 100 lines of code) class, but it is also very powerful. We have used Puppet already in
 [FluentTraversable](#fluent) section. What is a Puppet? Thanks to Puppet you can "record" some behaviour and execute
 this behaviour multiple times on various objects.
 
@@ -215,7 +214,7 @@ Example:
 
 `Puppet` supports property access, array access and method calls with arguments. It was created to simplify `map` and
 `flatMap` operations in `FluentTraversable` and is also used internally by `TraversableShaper`, but maybe you will find 
-another application for `Puppet`. 
+another use case for `Puppet`. 
 
 Puppet has two factory methods: `record` and `object` - those methods are the same, `object` method was created only for 
 semantics purpose. There is also `FluentTraversable\object` function, that creates `Puppet` instance.
@@ -223,7 +222,7 @@ semantics purpose. There is also `FluentTraversable\object` function, that creat
 Puppet was inspired by
 [Extractor class](https://github.com/letsdrink/ouzo-utils/blob/master/src/Ouzo/Utilities/Extractor.php) of 
 [ouzo-utils](https://github.com/letsdrink/ouzo-utils) library. `FluentTraversable` doesn't use `Extractor` class, because 
-in this library is a lot of stuff that would not be used.
+in this library is a lot of stuff that would not be used by `FluentTraversable`.
 
 <a name="contri"></a>
 ## Contribution
@@ -233,7 +232,7 @@ Any suggestions, PR, bug reports etc. are welcome ;)
 <a name="license"></a>
 ## License
 
-**MIT**
+**MIT** - details in [LICENSE](LICENSE) file
 
 [1]: http://www.nurkiewicz.com/2013/08/optional-in-java-8-cheat-sheet.html
 [2]: https://github.com/schmittjoh/php-option
