@@ -3,7 +3,11 @@
 
 namespace FluentTraversable;
 
-
+/**
+ * Class that is able to record behaviour and play this behaviour multiple times on various objects
+ *
+ * @author Piotr Śliwa <peter.pl7@gmail.com>
+ */
 class Puppet implements \ArrayAccess
 {
     private $movements = array();

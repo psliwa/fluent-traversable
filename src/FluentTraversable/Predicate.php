@@ -5,6 +5,11 @@ namespace FluentTraversable;
 
 use FluentTraversable\Internal\PropertyGetter;
 
+/**
+ * Factory for basic predicates
+ *
+ * @author Piotr Śliwa <peter.pl7@gmail.com>
+ */
 class Predicate
 {
     private static $propertyGetter;

@@ -5,6 +5,11 @@ namespace FluentTraversable;
 use PhpOption\None;
 use PhpOption\Option;
 
+/**
+ * Provides declarative way of array manipulation
+ *
+ * @author Piotr Śliwa <peter.pl7@gmail.com>
+ */
 class FluentTraversable implements TraversableFlow
 {
     private $elements;
@@ -14,6 +19,12 @@ class FluentTraversable implements TraversableFlow
         $this->elements = is_array($traversable) ? $traversable : $this->convertToArray($traversable);
     }
 
+    /**
+     * Creates FluentTraversable from given array or traversable
+     *
+     * @param array|\Traversable $traversable
+     * @return FluentTraversable
+     */
     public static function from($traversable)
     {
         if($traversable instanceof FluentTraversable) {
@@ -62,7 +73,8 @@ class FluentTraversable implements TraversableFlow
     //intermediate operations
 
     /**
-     * @param $func
+     * @inheritdoc
+     *
      * @return FluentTraversable
      */
     public function map($func)
@@ -72,7 +84,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param null $func
+     * @inheritdoc
+     *
      * @return FluentTraversable
      */
     public function order($func = null)
@@ -87,7 +100,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $value
+     * @inheritdoc
+     *
      * @return FluentTraversable
      */
     public function append($value)
@@ -98,7 +112,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $predicate
+     * @inheritdoc
+     *
      * @return FluentTraversable
      */
     public function filter($predicate)
@@ -109,6 +124,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
+     * @inheritdoc
+     *
      * @return FluentTraversable
      */
     public function unique()
@@ -120,7 +137,8 @@ class FluentTraversable implements TraversableFlow
 
 
     /**
-     * @param $keyFunction
+     * @inheritdoc
+     *
      * @return FluentTraversable
      */
     public function group($keyFunction)
@@ -138,7 +156,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $predicate
+     * @inheritdoc
+     *
      * @return FluentTraversable
      */
     public function partition($predicate)
@@ -159,7 +178,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $i
+     * @inheritdoc
+     *
      * @return FluentTraversable
      */
     public function skip($i)
@@ -170,7 +190,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $i
+     * @inheritdoc
+     *
      * @return FluentTraversable
      */
     public function limit($i)
@@ -181,29 +202,32 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $traversable
+     * @inheritdoc
+     *
      * @return FluentTraversable
      */
     public function intersect($traversable)
     {
-        $this->elements = array_intersect($this->elements, self::from($traversable)->toArray());
+        $this->elements = array_intersect($this->elements, self::from($traversable)->toMap());
 
         return $this;
     }
 
     /**
-     * @param $traversable
+     * @inheritdoc
+     *
      * @return FluentTraversable
      */
     public function difference($traversable)
     {
-        $this->elements = array_diff($this->elements, self::from($traversable)->toArray());
+        $this->elements = array_diff($this->elements, self::from($traversable)->toMap());
 
         return $this;
     }
 
     /**
-     * @param $func
+     * @inheritdoc
+     *
      * @return FluentTraversable
      */
     public function flatMap($func)
@@ -214,6 +238,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
+     * @inheritdoc
+     *
      * @return FluentTraversable
      * @throws \LogicException
      */
@@ -240,6 +266,8 @@ class FluentTraversable implements TraversableFlow
     //terminal operations
 
     /**
+     * @inheritdoc
+     *
      * @return array
      */
     public function toArray()
@@ -248,6 +276,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
+     * @inheritdoc
+     *
      * @return array
      */
     public function toMap()
@@ -256,7 +286,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $separator
+     * @inheritdoc
+     *
      * @return string
      */
     public function join($separator)
@@ -265,7 +296,7 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @return Option
+     * @inheritdoc
      */
     public function first()
     {
@@ -273,8 +304,7 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $comparator
-     * @return Option
+     * @inheritdoc
      */
     public function max($comparator = null)
     {
@@ -293,8 +323,7 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $comparator
-     * @return Option
+     * @inheritdoc
      */
     public function min($comparator = null)
     {
@@ -313,7 +342,7 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @return Option
+     * @inheritdoc
      */
     public function last()
     {
@@ -328,8 +357,7 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $predicate
-     * @return Option
+     * @inheritdoc
      */
     public function firstMatch($predicate)
     {
@@ -343,8 +371,7 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $biOperation
-     * @return Option
+     * @inheritdoc
      */
     public function reduce($biOperation)
     {
@@ -356,17 +383,17 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $identity
-     * @param $biOperation
+     * @inheritdoc
+     *
      * @return mixed
      */
-    public function reduceFromIdentity($identity, $biOperation)
+    public function reduceFromIdentity($identity, $binaryOperation)
     {
-        return array_reduce($this->elements, $biOperation, $identity);
+        return array_reduce($this->elements, $binaryOperation, $identity);
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function size()
     {
@@ -374,7 +401,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $predicate
+     * @inheritdoc
+     *
      * @return bool
      */
     public function allMatch($predicate)
@@ -389,7 +417,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $predicate
+     * @inheritdoc
+     *
      * @return bool
      */
     public function anyMatch($predicate)
@@ -404,7 +433,8 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * @param $predicate
+     * @inheritdoc
+     *
      * @return bool
      */
     public function noneMatch($predicate)
@@ -418,11 +448,21 @@ class FluentTraversable implements TraversableFlow
         return true;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function collect($collector)
     {
         return call_user_func($collector, $this->elements);
     }
 
+    /**
+     * Performs given function on each element
+     *
+     * @param callable $func
+     *
+     * @see map
+     */
     public function each($func)
     {
         foreach($this->elements as $value) {

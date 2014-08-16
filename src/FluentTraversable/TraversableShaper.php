@@ -15,13 +15,19 @@ class TraversableShaper implements TraversableFlow
     {
     }
 
+    /**
+     * Creates empty shaper
+     *
+     * @return TraversableShaper
+     */
     public static function create()
     {
         return new static();
     }
 
     /**
-     * @param $func
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function map($func)
@@ -34,7 +40,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $func
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function flatMap($func)
@@ -47,10 +54,11 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $func
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
-    public function filter($func)
+    public function filter($predicate)
     {
         $this->checkTerminalOperation();
 
@@ -60,6 +68,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function unique()
@@ -72,10 +82,11 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $func
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
-    public function group($func)
+    public function group($keyFunction)
     {
         $this->checkTerminalOperation();
 
@@ -85,7 +96,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $comparator
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function order($comparator = null)
@@ -98,7 +110,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $i
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function skip($i)
@@ -111,7 +124,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $i
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function limit($i)
@@ -124,10 +138,11 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $func
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
-    public function partition($func)
+    public function partition($predicate)
     {
         $this->checkTerminalOperation();
 
@@ -137,7 +152,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $traversable
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function intersect($traversable)
@@ -150,7 +166,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $traversable
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function difference($traversable)
@@ -163,7 +180,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $element
+     * @inheritdoc
+     *
      * @return TraversableFlow
      */
     public function append($element)
@@ -176,7 +194,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $predicate
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function allMatch($predicate)
@@ -189,7 +208,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $predicate
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function anyMatch($predicate)
@@ -202,7 +222,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $predicate
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function noneMatch($predicate)
@@ -215,6 +236,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function size()
@@ -227,8 +250,7 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $comparator
-     * @return Option
+     * @inheritdoc
      */
     public function max($comparator = null)
     {
@@ -251,8 +273,7 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $comparator
-     * @return Option
+     * @inheritdoc
      */
     public function min($comparator = null)
     {
@@ -264,10 +285,9 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $func
-     * @return Option
+     * @inheritdoc
      */
-    public function firstMatch($func)
+    public function firstMatch($predicate)
     {
         $this->markTerminalOperation(__FUNCTION__);
 
@@ -277,6 +297,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function toArray()
@@ -289,6 +311,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function toMap()
@@ -301,7 +325,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $collector
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function collect($collector)
@@ -314,7 +339,8 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $separator
+     * @inheritdoc
+     *
      * @return TraversableShaper
      */
     public function join($separator)
@@ -327,7 +353,7 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @return Option
+     * @inheritdoc
      */
     public function first()
     {
@@ -339,7 +365,7 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @return Option
+     * @inheritdoc
      */
     public function last()
     {
@@ -351,10 +377,9 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $func
-     * @return Option
+     * @inheritdoc
      */
-    public function reduce($func)
+    public function reduce($binaryOperator)
     {
         $this->markTerminalOperation(__FUNCTION__);
 
@@ -365,11 +390,10 @@ class TraversableShaper implements TraversableFlow
 
 
     /**
-     * @param $identity
-     * @param $biOperation
+     * @inheritdoc
      * @return TraversableShaper
      */
-    public function reduceFromIdentity($identity, $biOperation)
+    public function reduceFromIdentity($identity, $binaryOperation)
     {
         $this->markTerminalOperation(__FUNCTION__);
 
@@ -400,7 +424,9 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * @param $traversable
+     * Applies shaper on given traversable
+     *
+     * @param array|\Traversable $traversable
      * @return mixed Depends on shaper instrumentation
      */
     public function apply($traversable)

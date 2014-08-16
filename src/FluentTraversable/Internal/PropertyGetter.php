@@ -4,6 +4,11 @@ namespace FluentTraversable\Internal;
 
 use FluentTraversable\Puppet;
 
+/**
+ * Provides basic property reading ability
+ *
+ * @author Piotr Śliwa <peter.pl7@gmail.com>
+ */
 class PropertyGetter
 {
     public function getValue($object, $path)
