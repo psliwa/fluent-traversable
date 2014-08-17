@@ -160,31 +160,35 @@ There is an example:
 
 ```php
 
-    $maxPrinter = TraversableShaper::create();
+    $maxEvenPrinter = TraversableShaper::create();
 
     //very important is, to not chain directly from `create()` method, first you should assign created object
     //to variable, and then using reference to object you can compose your function
 
-    $maxPrinter
+    $maxEvenPrinter
+        ->filter(function($number){
+            //only even numbers
+            return $number % 2 === 0;
+        })
         ->max()
         //"max" (as same as firstMatch) returns Option, because there is possibility given array is empty
         ->map(function($value){
-            return 'max: '.$value;
+            return 'max even number: '.$value;
         })
-        ->orElse(Option::fromValue('max not found'))
+        ->orElse(Option::fromValue('max even number not found'))
         ->map('printf');
 
 ```
 
-Ok, we have `$maxPrinter` object, what's next?
+Ok, we have `$maxEvenPrinter` object, what's next?
 
 ```php
 
-    $maxPrinter(array(1, 3, 5, 2));
-    //output will be: "max: 5"
+    $maxEvenPrinter(array(1, 3, 5, 2, 4));
+    //output will be: "max even number: 4"
     
-    $maxPrinter(array())
-    //output will be: "max not found"
+    $maxEvenPrinter(array(1, 3, 5));
+    //output will be: "max even number not found"
 
 ```
 
