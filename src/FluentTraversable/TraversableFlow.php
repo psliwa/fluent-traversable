@@ -152,6 +152,13 @@ interface TraversableFlow
      */
     public function append($element);
 
+    /**
+     * Extracts keys from the array
+     *
+     * @return TraversableFlow
+     */
+    public function keys();
+
     //terminal operations
 
     /**

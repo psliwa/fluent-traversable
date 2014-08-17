@@ -6,6 +6,11 @@ namespace FluentTraversable;
 
 use PhpOption\Option;
 
+/**
+ * Class that can be used to compose complex functions that operates on arrays.
+ *
+ * @author Piotr Śliwa <peter.pl7@gmail.com>
+ */
 class TraversableShaper implements TraversableFlow
 {
     private $operations = array();
@@ -182,7 +187,21 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableFlow
+     * @return TraversableShaper
+     */
+    public function keys()
+    {
+        $this->checkTerminalOperation();
+
+        $this->operations[] = array(__FUNCTION__, func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return TraversableShaper
      */
     public function append($element)
     {

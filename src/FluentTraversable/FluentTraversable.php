@@ -263,6 +263,18 @@ class FluentTraversable implements TraversableFlow
         return $this;
     }
 
+    /**
+     * @inheritdoc
+     *
+     * @return FluentTraversable
+     */
+    public function keys()
+    {
+        $this->elements = array_keys($this->elements);
+
+        return $this;
+    }
+
     //terminal operations
 
     /**

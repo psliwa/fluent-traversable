@@ -504,6 +504,15 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
             ->toArray();
     }
 
+    public function testKeys()
+    {
+        $actual = FluentTraversable::from(array('key1' => 'value1', 'key2' => 'value2'))
+            ->keys()
+            ->toArray();
+
+        $this->assertEquals(array('key1', 'key2'), $actual);
+    }
+
     private function assertOptionWithValue($expected, Option $actual)
     {
         $this->assertTrue($actual->isDefined());
