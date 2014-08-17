@@ -63,8 +63,8 @@ The same code using `FluentTraversable`:
 
     //some imports
     use FluentTraversable\FluentTraversable;
-    use FluentTraversable\Predicate as is;
-    use FluentTraversable\Puppet as the;
+    use FluentTraversable\Semantics\is;
+    use FluentTraversable\Semantics\the;
 
     $books = array(/* some books */);
     
@@ -81,11 +81,11 @@ The same code using `FluentTraversable`:
 There are no loops, if statements, it looks straightforward, flow is clear and explicit (when you now what `filter`, 
 `flatMap`, `map` etc methods are doing - as I said before the basics functional programming patters are needed ;)).
 
-`Predicate` class (aliased to `is` in example) is factory for closures that have one argument and evaluate it to boolean 
+`is` class (alias to `Predicate` class) is factory for closures that have one argument and evaluate it to boolean 
 value. There are `lt`, `gt`, `eq`, `not` etc methods. Closures in php are very lengthy, you have to write `function` 
 keyword, curly braces, return statement, semicolon etc - a lot of syntax noise. Closure is multiline (yes, I now it can 
 be written in single line, but it would be unreadable), so it is no very compact. To handle simple predicate cases, you 
-might use `Predicate` class, but you haven't to ;)
+might use `Predicate` class (or `is` class alias - it will add some semantics to your code), but you haven't to ;)
 
 `the::object()->getAuthors()` also is a shortcut for closures, `the::object()` is as same as argument in the closure.
 `the::object()->getEmail()` is semantic equivalent to closure:
@@ -214,10 +214,13 @@ Example:
 
 `Puppet` supports property access, array access and method calls with arguments. It was created to simplify `map` and
 `flatMap` operations in `FluentTraversable` and is also used internally by `TraversableShaper`, but maybe you will find 
-another use case for `Puppet`. 
+another use case for `Puppet`.
 
 Puppet has two factory methods: `record` and `object` - those methods are the same, `object` method was created only for 
-semantics purpose. There is also `FluentTraversable\object` function, that creates `Puppet` instance.
+semantic purpose.
+
+`the` class is alias to `Puppet`, it only adds semantic meaning to using `Puppet` in `FluentTraversable` context:
+`->map(the::object()->getName())` is much more readable than `->map(Puppet::record()->getName())`.
 
 Puppet was inspired by
 [Extractor class](https://github.com/letsdrink/ouzo-utils/blob/master/src/Ouzo/Utilities/Extractor.php) of 
