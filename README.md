@@ -36,7 +36,7 @@ an example.
 
 I want to get emails of male authors of books that have been released before 2007.
 
-``php
+```php
 
     $books = array(/* some books */);
     
@@ -52,14 +52,14 @@ I want to get emails of male authors of books that have been released before 200
             }
         }
     }
-``
+```
 
 Ok, nested loops, nested if statements... It doesn't look good. If I use php array_map and array_filter functions, result
 wouldn't be better, would be even worst, so I omit this example.
 
 The same code using `FluentTraversable`:
 
-``php
+```php
 
     //some imports
     use FluentTraversable\FluentTraversable;
@@ -76,7 +76,7 @@ The same code using `FluentTraversable`:
         ->filter(is::notNull())
         ->toArray();       
 
-``
+```
 
 There are no loops, if statements, it looks straightforward, flow is clear and explicit (when you now what `filter`, 
 `flatMap`, `map` etc methods are doing - as I said before the basics functional programming patters are needed ;)).
@@ -90,13 +90,13 @@ might use `Predicate` class (or `is` class alias - it will add some semantics to
 `the::object()->getAuthors()` also is a shortcut for closures, `the::object()` is as same as argument in the closure.
 `the::object()->getEmail()` is semantic equivalent to closure:
 
-``php
+```php
 
     function($object){
         return $object->getEmail();
     }
 
-``
+```
 
 What is `the::object()`? I will tell you in [Puppet](#puppet) section ;)
 
@@ -109,14 +109,14 @@ of input array, so you can not chain operation anymore.
 
 Example:
 
-``php
+```php
 
     FluentTraversable::from(array())
         ->filter(...)//intermediate operation, so I can chain
         ->map(...)//intermediate operation, so I can chain
         ->size()//terminate operation, I cannot chain - it returns integer
 
-``
+```
 
 There are few terminal operations that returns `Option` value (if you don't know what is Option or Optional value pattern,
 follow this links: [php-option][2], [Optional explanation in Java][1]). For example `firstMatch` method could find nothing,
@@ -127,7 +127,7 @@ value from `Option` by `getOrElse` method:
 
 Example:
 
-``php
+```php
 
     FluentTraversable::from($books)
         ->firstMatch(is::eq('author.name', 'Stephen King'))
@@ -142,7 +142,7 @@ Example:
         //or you can call "->get()" and assign to variable, it is safe because you provided default value by "orElse"
         ;
 
-``
+```
 
 If Stephen King's book was found, "Found book: TITLE" will be printed, otherwise "Not found any book...".
 
@@ -158,7 +158,7 @@ shaper, and apply it multiple times on any array. `TraversableShaper` has very s
 
 There is an example:
 
-``php
+```php
 
     $maxPrinter = TraversableShaper::create();
 
@@ -174,11 +174,11 @@ There is an example:
         ->orElse(Option::fromValue('max not found'))
         ->map('printf');
 
-``
+```
 
 Ok, we have `$maxPrinter` object, what's next?
 
-``php
+```php
 
     $maxPrinter(array(1, 3, 5, 2));
     //output will be: "max: 5"
@@ -186,7 +186,7 @@ Ok, we have `$maxPrinter` object, what's next?
     $maxPrinter(array())
     //output will be: "max not found"
 
-``
+```
 
 As I said, `TraversableShaper` has almost the same methods as `FluentTraversable`. The difference between those two classes
 is that, `FluentTraversable` needs input array when object is created and it should be used once, `TraversableShaper`
@@ -203,14 +203,14 @@ this behaviour multiple times on various objects.
 
 Example:
 
-``php
+```php
 
     $book = ...;
     $puppet = Puppet::record()->getPublisher()->getName();
     
     echo $puppet($book);//$book->getPublisher()->getName() will be invoked
 
-``
+```
 
 `Puppet` supports property access, array access and method calls with arguments. It was created to simplify `map` and
 `flatMap` operations in `FluentTraversable` and is also used internally by `TraversableShaper`, but maybe you will find 
