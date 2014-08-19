@@ -13,9 +13,8 @@ class PropertyGetter
 {
     public function getValue($object, $path)
     {
-        if($path instanceof Puppet) {
-            return $path($object);
-        }
+        if($path === null) return $object;
+        if($path instanceof Puppet) return $path($object);
 
         $properties = explode('.', $path);
 
