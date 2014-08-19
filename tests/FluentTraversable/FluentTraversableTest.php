@@ -513,6 +513,68 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('key1', 'key2'), $actual);
     }
 
+    public function testTo_givenValidClass_createValidObject()
+    {
+        $result = FluentTraversable::from(array(1, 2, 3))
+            ->to('ArrayObject');
+
+        $this->assertInstanceOf('ArrayObject', $result);
+        $this->assertEquals(array(1, 2, 3), $result->getArrayCopy());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testTo_givenInvalidClass_throwEx()
+    {
+        FluentTraversable::from(array(1, 2, 3))
+            ->to('InvalidClass');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testTo_givenValidClass_givenClassConstructorHasNotArguments_throwEx()
+    {
+        FluentTraversable::from(array(1, 2, 3))
+            ->to('stdClass');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testTo_givenValidClass_givenConstructorHasFewRequiredArgs_throwEx()
+    {
+        FluentTraversable::from(array(1, 2, 3))
+            ->to('FluentTraversable\\FluentTraversableTest_FewRequiredConstructorArgs');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testTo_givenValidClass_givenConstructorHasOneNotFirstRequiredArrayArg_throwEx()
+    {
+        FluentTraversable::from(array(1, 2, 3))
+            ->to('FluentTraversable\\FluentTraversableTest_FewOptionalAndOneArrayRequired');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testTo_givenValidClass_givenConstructorHasOneClassHintedArg_throwEx()
+    {
+        FluentTraversable::from(array(1, 2, 3))
+            ->to('FluentTraversable\\FluentTraversableTest_OneRequiredClassArg');
+    }
+
+    public function testTo_givenValidClass_givenConstructorHasOneArrayHintedArg_ok()
+    {
+        $result = FluentTraversable::from(array(1, 2, 3))
+            ->to('FluentTraversable\\FluentTraversableTest_OneOptionalArrayArg');
+
+        $this->assertEquals(array(1, 2, 3), $result->arg1);
+    }
+
     private function assertOptionWithValue($expected, Option $actual)
     {
         $this->assertTrue($actual->isDefined());
@@ -534,6 +596,40 @@ class FluentTraversableTest_String
     {
         return $this->string;
     }
+}
 
+class FluentTraversableTest_FewRequiredConstructorArgs
+{
+    public function __construct($arg1, $arg2)
+    {
+    }
+}
 
+class FluentTraversableTest_FewOptionalAndOneArrayRequired
+{
+    public $arg1;
+    public $arg2;
+    public $arg3;
+
+    public function __construct($arg1 = null, array $arg2, $arg3 = null)
+    {
+        $this->arg1 = $arg1;
+        $this->arg2 = $arg2;
+        $this->arg3 = $arg3;
+    }
+}
+
+class FluentTraversableTest_OneRequiredClassArg
+{
+    public function __construct(\stdClass $arg1)
+    {
+    }
+}
+
+class FluentTraversableTest_OneOptionalArrayArg
+{
+    public function __construct(array $arg1 = array())
+    {
+        $this->arg1 = $arg1;
+    }
 }

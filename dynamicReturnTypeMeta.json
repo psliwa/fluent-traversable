@@ -1,0 +1,19 @@
+{
+    "methodCalls": [
+        {
+            "class": "\\FluentTraversable\\FluentTraversable",
+            "method": "to",
+            "position": 0
+        },
+        {
+            "class": "\\FluentTraversable\\Puppet",
+            "method": "object",
+            "position": 0
+        },
+        {
+            "class": "\\FluentTraversable\\Puppet",
+            "method": "record",
+            "position": 0
+        }
+    ]
+}

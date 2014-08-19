@@ -348,6 +348,20 @@ class TraversableShaper implements TraversableFlow
      *
      * @return TraversableShaper
      */
+    public function to($className)
+    {
+        $this->markTerminalOperation(__FUNCTION__);
+
+        $this->operations[] = array(__FUNCTION__, func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return TraversableShaper
+     */
     public function collect($collector)
     {
         $this->markTerminalOperation(__FUNCTION__);

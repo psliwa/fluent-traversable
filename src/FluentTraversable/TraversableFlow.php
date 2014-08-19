@@ -251,6 +251,15 @@ interface TraversableFlow
     public function toMap();
 
     /**
+     * Creates and returns object of given class. Constructor of given class should has one array argument. This method
+     * can be used to convert array to given collection class.
+     *
+     * @param string $className
+     * @return mixed
+     */
+    public function to($className);
+
+    /**
      * Collects elements using given collector function.
      *
      * @param callable $collector

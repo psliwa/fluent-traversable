@@ -2,6 +2,8 @@
 
 namespace FluentTraversable;
 
+use FluentTraversable\Semantics\is;
+use FluentTraversable\Semantics\the;
 use PhpOption\None;
 use PhpOption\Option;
 
@@ -295,6 +297,68 @@ class FluentTraversable implements TraversableFlow
     public function toMap()
     {
         return $this->elements;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function to($className)
+    {
+        $class = $this->getClassFromClassName($className);
+        $parameters = $this->getConstructorParameters($class);
+
+        $requiredParameters = self::from($parameters)
+            ->filter(is::false('optional'));
+
+        if($requiredParameters->size() > 1) {
+            throw new \InvalidArgumentException(sprintf('Constructor of "%s" has more than 1 required parameter', $className));
+        }
+
+        $constructorArgs = self::from($parameters)
+            ->first()
+            ->map($this->parameterToConstructorArgs())
+            ->getOrElse(array());
+
+        return $class->newInstanceArgs($constructorArgs);
+    }
+
+    private function getClassFromClassName($className)
+    {
+        if (!class_exists($className)) {
+            throw new \InvalidArgumentException(sprintf('Class "%s" does not exist', $className));
+        }
+
+        return  new \ReflectionClass($className);
+    }
+
+    private function getConstructorParameters(\ReflectionClass $class)
+    {
+        $constructor = $class->getConstructor();
+
+        if (!$constructor || !$constructor->isPublic()) {
+            throw new \InvalidArgumentException(
+                sprintf('Class "%s" has not defined public constructor', $class->getName())
+            );
+        }
+
+        return $constructor->getParameters();
+    }
+
+    private function parameterToConstructorArgs()
+    {
+        $elements = $this->elements;
+        return function(\ReflectionParameter $parameter) use($elements) {
+            if($parameter->getClass() !== null) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Can not pass array as first constructor argument of "%s" class',
+                        $parameter->getDeclaringClass()->getName()
+                    )
+                );
+            }
+
+            return array($elements);
+        };
     }
 
     /**
