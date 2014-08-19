@@ -12,6 +12,7 @@ To fully enjoy of this library, you should be familiar with basic patterns of fu
 1. [FluentTraversable](#fluent)
 1. [TraversableShaper](#shaper)
 1. [Puppet](#puppet)
+1. [Predicates](#predicates)
 1. [Contribution](#contri)
 1. [License](#license)
 
@@ -230,6 +231,57 @@ Puppet was inspired by
 [Extractor class](https://github.com/letsdrink/ouzo-utils/blob/master/src/Ouzo/Utilities/Extractor.php) of 
 [ouzo-utils](https://github.com/letsdrink/ouzo-utils) library. `FluentTraversable` doesn't use `Extractor` class, because 
 in this library is a lot of stuff that would not be used by `FluentTraversable`.
+
+<a name="predicates"></a>
+## Predicates
+
+Predicate is a function that evaluates single value to boolean. Predefined predicates are available in `is` and `Predicate`
+classes. Those classes are the same, `is` is an alias to `Predicate`, so you can choose witch one to use (`is` gives more
+expressiveness to code). Predicates are perfect to use in `filter`, `firstMatch`, `partition`, `allMatch`, `noneMatch`,
+`anyMatch` methods of `FluentTraversable`.
+
+The most of predicates (for example: `eq`, `gt`, `qte`, `identical`, `in`, `contains`) have two versions:
+
+* unary: `predicate($valueToCompare)`
+
+    ```php
+    
+        $gt25 = is::gt(25);    
+        $gt25(26);//evaluates to true
+    
+    ```
+
+* binary - `predicate($property, $valueToCompare)`
+
+    ```php
+    
+        $ageGt25 = is::gt('age', 25);
+        $gt25(array('age', 26));//evaluates to true
+    
+    ```
+
+Few predicates (`null`, `notNull`, `false`, `true`) have also two, but different versions:
+
+* not argument: `predicate()`
+
+    ```php
+    
+        $true = is::true();    
+        $true(true);//evaluates to true
+    
+    ```
+    
+* unary: `predicate($property)`
+
+    ```php
+    
+        $true = is::true('awesome');    
+        $true(array('awesome' => true));//evaluates to true
+    
+    ```
+    
+There are also logical predicates (`not`, `andX`, `orX`), but when you need to create complex predicate maybe the
+better and more readable way is just to use closure.
 
 <a name="contri"></a>
 ## Contribution
