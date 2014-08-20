@@ -82,11 +82,11 @@ The same code using `FluentTraversable`:
 There are no loops, if statements, it looks straightforward, flow is clear and explicit (when you now what `filter`, 
 `flatMap`, `map` etc methods are doing - as I said before the basics functional programming patters are needed ;)).
 
-`is` class (alias to `Predicate` class) is factory for closures that have one argument and evaluate it to boolean 
+`is` class (alias to `Predicates` class) is factory for closures that have one argument and evaluate it to boolean 
 value. There are `lt`, `gt`, `eq`, `not` etc methods. Closures in php are very lengthy, you have to write `function` 
 keyword, curly braces, return statement, semicolon etc - a lot of syntax noise. Closure is multiline (yes, I now it can 
 be written in single line, but it would be unreadable), so it is no very compact. To handle simple predicate cases, you 
-might use `Predicate` class (or `is` class alias - it will add some semantics to your code), but you haven't to ;)
+might use `Predicates` class (or `is` class alias - it will add some semantics to your code), but you haven't to ;)
 
 `the::object()->getAuthors()` also is a shortcut for closures, `the::object()` is as same as argument in the closure.
 `the::object()->getEmail()` is semantic equivalent to closure:
@@ -235,8 +235,8 @@ in this library is a lot of stuff that would not be used by `FluentTraversable`.
 <a name="predicates"></a>
 ## Predicates
 
-Predicate is a function that evaluates single value to boolean. Predefined predicates are available in `is` and `Predicate`
-classes. Those classes are the same, `is` is an alias to `Predicate`, so you can choose witch one to use (`is` gives more
+Predicate is a function that evaluates single value to boolean. Predefined predicates are available in `is` and `Predicates`
+classes. Those classes are the same, `is` is an alias to `Predicates`, so you can choose witch one to use (`is` gives more
 expressiveness to code). Predicates are perfect to use in `filter`, `firstMatch`, `partition`, `allMatch`, `noneMatch`,
 `anyMatch` methods of `FluentTraversable`.
 
