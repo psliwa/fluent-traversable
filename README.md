@@ -11,8 +11,8 @@ To fully enjoy of this library, you should be familiar with basic patterns of fu
 1. [Installation](#installation)
 1. [FluentTraversable](#fluent)
 1. [TraversableShaper](#shaper)
-1. [Puppet](#puppet)
 1. [Predicates](#predicates)
+1. [Puppet](#puppet)
 1. [Contribution](#contri)
 1. [License](#license)
 
@@ -65,15 +65,15 @@ The same code using `FluentTraversable`:
     //some imports
     use FluentTraversable\FluentTraversable;
     use FluentTraversable\Semantics\is;
-    use FluentTraversable\Semantics\the;
+    use FluentTraversable\Semantics\get;
 
     $books = array(/* some books */);
     
     $emails = FluentTraversable::from($books)
         ->filter(is::lt('releaseDate', 2007))
-        ->flatMap(the::object()->getAuthors())
+        ->flatMap(get::value('authors'))
         ->filter(is::eq('sex', 'male'))
-        ->map(the::object()->getEmail())
+        ->map(get::value('email')))
         ->filter(is::notNull())
         ->toArray();       
 
@@ -88,18 +88,18 @@ keyword, curly braces, return statement, semicolon etc - a lot of syntax noise. 
 be written in single line, but it would be unreadable), so it is no very compact. To handle simple predicate cases, you 
 might use `Predicates` class (or `is` class alias - it will add some semantics to your code), but you haven't to ;)
 
-`the::object()->getAuthors()` also is a shortcut for closures, `the::object()` is as same as argument in the closure.
-`the::object()->getEmail()` is semantic equivalent to closure:
+`get::value('authors')` also is a shortcut for closures, this is semantic equivalent to:
 
 ```php
 
     function($object){
-        return $object->getEmail();
+        return $object->getAuthors();
     }
 
 ```
 
-What is `the::object()`? I will tell you in [Puppet](#puppet) section ;)
+Nested paths in predicates and `get::value` function are supported, so this code works as expected: 
+`get::value('address.city.name')`.
 
 `FluentTraversable` has a lot of useful methods: `map`, `flatMap`, `filter`, `unique`, `group`, `order`, `allMatch`,
 `anyMatch`, `noneMatch`, `firstMatch`, `max`, `min`, `reduce`, `toArray`, `toMap` and more. All that methods belong to
@@ -198,40 +198,6 @@ is that, `FluentTraversable` needs input array when object is created and it sho
 doesn't need array when object is created and can be invoked multiple times with different input arrays. Internally
 `TraversableShaper` uses `FluentTraversable` instance ;) You should threat `TraversableShaper` as tool to compose functions.
 
-<a name="puppet"></a>
-
-## Puppet
-
-Puppet is a very small (less than 100 lines of code) class, but it is also very powerful. We have used Puppet already in
-[FluentTraversable](#fluent) section. What is a Puppet? Thanks to Puppet you can "record" some behaviour and execute
-this behaviour multiple times on various objects.
-
-Example:
-
-```php
-
-    $book = ...;
-    $puppet = Puppet::record()->getPublisher()->getName();
-    
-    echo $puppet($book);//$book->getPublisher()->getName() will be invoked
-
-```
-
-`Puppet` supports property access, array access and method calls with arguments. It was created to simplify `map` and
-`flatMap` operations in `FluentTraversable` and is also used internally by `TraversableShaper`, but maybe you will find 
-another use case for `Puppet`.
-
-Puppet has two factory methods: `record` and `object` - those methods are the same, `object` method was created only for 
-semantic purpose.
-
-`the` class is alias to `Puppet`, it only adds semantic meaning to using `Puppet` in `FluentTraversable` context:
-`->map(the::object()->getName())` is much more readable than `->map(Puppet::record()->getName())`.
-
-Puppet was inspired by
-[Extractor class](https://github.com/letsdrink/ouzo-utils/blob/master/src/Ouzo/Utilities/Extractor.php) of 
-[ouzo-utils](https://github.com/letsdrink/ouzo-utils) library. `FluentTraversable` doesn't use `Extractor` class, because 
-in this library is a lot of stuff that would not be used by `FluentTraversable`.
-
 <a name="predicates"></a>
 ## Predicates
 
@@ -282,6 +248,39 @@ Few predicates (`null`, `notNull`, `false`, `true`) have also two, but different
     
 There are also logical predicates (`not`, `andX`, `orX`), but when you need to create complex predicate maybe the
 better and more readable way is just to use closure.
+
+<a name="puppet"></a>
+## Puppet
+
+Puppet is a very small (less than 100 lines of code) class, but it is also very powerful. What is a Puppet? Thanks to 
+Puppet you can "record" some behaviour and execute this behaviour multiple times on various objects.
+
+Example:
+
+```php
+
+    $book = ...;
+    $puppet = Puppet::record()->getPublisher()->getName();
+    
+    echo $puppet($book);//$book->getPublisher()->getName() will be invoked
+
+```
+
+`Puppet` supports property access, array access and method calls with arguments. Originally it was created to simplify `map` and
+`flatMap` operations in `FluentTraversable`. It is is also used internally by `TraversableShaper`, but maybe you will find 
+another use case for `Puppet`.
+
+Puppet has two factory methods: `record` and `object` - those methods are the same, `object` method was created only for 
+semantic purpose. You can use `Puppet` to create mapping function for `map`, `flatMap` etc. functions, but `get::value()`
+is recommended for this purpose.
+
+`the` class is alias to `Puppet`, it only adds semantic meaning to using `Puppet` in `FluentTraversable` context:
+`->map(the::object()->getName())` is much more readable than `->map(Puppet::record()->getName())`.
+
+Puppet was inspired by
+[Extractor class](https://github.com/letsdrink/ouzo-utils/blob/master/src/Ouzo/Utilities/Extractor.php) of 
+[ouzo-utils](https://github.com/letsdrink/ouzo-utils) library. `FluentTraversable` doesn't use `Extractor` class, because 
+in this library is a lot of stuff that would not be used by `FluentTraversable`.
 
 <a name="contri"></a>
 ## Contribution
