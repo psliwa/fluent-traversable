@@ -69,7 +69,7 @@ class FluentTraversable implements TraversableFlow
 
     private static function isTraversable($traversable)
     {
-        return is_array($traversable) && !$traversable instanceof \Traversable;
+        return is_array($traversable) || $traversable instanceof \Traversable;
     }
 
     //intermediate operations

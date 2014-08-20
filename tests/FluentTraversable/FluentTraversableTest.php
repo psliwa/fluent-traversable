@@ -8,6 +8,14 @@ use PhpOption\Option;
 
 class FluentTraversableTest extends \PHPUnit_Framework_TestCase
 {
+    public function testCreationFromIterator()
+    {
+        $actual = FluentTraversable::from(new \ArrayObject(array(1, 2, 3)))
+            ->toMap();
+
+        $this->assertSame(array(1, 2, 3), $actual);
+    }
+
     public function testMap()
     {
         $actual = FluentTraversable::from(array('A', 'b', 'C'))
