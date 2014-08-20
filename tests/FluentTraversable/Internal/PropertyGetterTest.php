@@ -4,7 +4,9 @@
 namespace FluentTraversable\Internal;
 
 
+use FluentTraversable\FluentTraversable;
 use FluentTraversable\Puppet;
+use FluentTraversable\Semantics\is;
 
 class PropertyGetterTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,6 +27,30 @@ class PropertyGetterTest extends \PHPUnit_Framework_TestCase
     public function testGetValue($object, $property, $expectedValue)
     {
         $this->assertEquals($expectedValue, $this->propertyGetter->getValue($object, $property));
+    }
+
+    /**
+     * @test
+     */
+    public function testGetFewTimesValues()
+    {
+        //given
+
+        $object = new PropertyGetterTest_Object('p1', 'p2');
+
+        //when
+
+        $values = array(
+            $this->propertyGetter->getValue($object, 'property1'),
+            $this->propertyGetter->getValue($object, 'property1'),
+        );
+
+        //then
+
+        $this->assertTrue(
+            FluentTraversable::from($values)
+                ->allMatch(is::eq('p1'))
+        );
     }
 
     public function dataProvider()
