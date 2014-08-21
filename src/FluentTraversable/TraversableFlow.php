@@ -78,7 +78,7 @@ interface TraversableFlow
      *
      * @see partition
      */
-    public function group($keyFunction);
+    public function groupBy($keyFunction);
 
     /**
      * Orders elements by natural order or using comparing function
@@ -87,6 +87,26 @@ interface TraversableFlow
      * @return TraversableFlow
      */
     public function order($comparator = null);
+
+    /**
+     * Orders elements using provided function as value provider for objects.
+     *
+     * Example:
+     * <code>
+     *      FluentTraversable::from(array(
+     *              array('name' => 'John'),
+     *              array('name' => 'Jolka'))
+     *          )
+     *          //order by "name" property
+     *          ->orderBy(get::value('name'))
+     *          ->toArray();
+     * </code>
+     *
+     * @param callable $valFunction
+     * @param string $direction ASC or DESC - direction of ordering
+     * @return TraversableFlow
+     */
+    public function orderBy($valFunction, $direction = 'ASC');
 
     /**
      * Skips first few elements
@@ -120,7 +140,7 @@ interface TraversableFlow
      * @param callable $predicate
      * @return TraversableFlow
      *
-     * @see group
+     * @see groupBy
      */
     public function partition($predicate);
 

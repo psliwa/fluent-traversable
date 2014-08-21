@@ -101,7 +101,7 @@ might use `Predicates` class (or `is` class alias - it will add some semantics t
 Nested paths in predicates and `get::value` function are supported, so this code works as expected: 
 `get::value('address.city.name')`.
 
-`FluentTraversable` has a lot of useful methods: `map`, `flatMap`, `filter`, `unique`, `group`, `order`, `allMatch`,
+`FluentTraversable` has a lot of useful methods: `map`, `flatMap`, `filter`, `unique`, `groupBy`, `orderBy`, `allMatch`,
 `anyMatch`, `noneMatch`, `firstMatch`, `max`, `min`, `reduce`, `toArray`, `toMap` and more. All that methods belong to
 one of two groups: intermediate or terminate operations. Intermediate operation does some work on input array, modifies it
 and returns `FluentTraversable` object, so you can chain another operation. Terminate operation does some calculation on

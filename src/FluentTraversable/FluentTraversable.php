@@ -90,15 +90,35 @@ class FluentTraversable implements TraversableFlow
      *
      * @return FluentTraversable
      */
-    public function order($func = null)
+    public function order($comparator = null)
     {
-        if($func === null) {
+        if($comparator === null) {
             asort($this->elements);
         } else {
-            uasort($this->elements, $func);
+            uasort($this->elements, $comparator);
         }
 
         return $this;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return FluentTraversable
+     */
+    public function orderBy($valFunction, $direction = 'ASC')
+    {
+        $direction = strtoupper($direction);
+        $aGreaterValue = $direction === 'ASC' ? 1 : -1;
+
+        return $this->order(function($a, $b) use($valFunction, $aGreaterValue){
+            $aVal = $valFunction($a);
+            $bVal = $valFunction($b);
+
+            if($aVal > $bVal) return $aGreaterValue;
+            if($aVal < $bVal) return -$aGreaterValue;
+            return 0;
+        });
     }
 
     /**
@@ -137,13 +157,12 @@ class FluentTraversable implements TraversableFlow
         return $this;
     }
 
-
     /**
      * @inheritdoc
      *
      * @return FluentTraversable
      */
-    public function group($keyFunction)
+    public function groupBy($keyFunction)
     {
         $elements = array();
 
@@ -164,7 +183,7 @@ class FluentTraversable implements TraversableFlow
      */
     public function partition($predicate)
     {
-        $this->group(function($value) use($predicate){
+        $this->groupBy(function($value) use($predicate){
             return !call_user_func($predicate, $value);
         });
 

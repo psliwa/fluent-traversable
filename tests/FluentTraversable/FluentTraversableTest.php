@@ -342,10 +342,10 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($actual);
     }
 
-    public function testGroup()
+    public function testGroupBy()
     {
         $actual = FluentTraversable::from(range(1, 9))
-            ->group(function($value){
+            ->groupBy(function($value){
                 return $value % 3;
             })
             ->toMap();
@@ -581,6 +581,57 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
             ->to('FluentTraversable\\FluentTraversableTest_OneOptionalArrayArg');
 
         $this->assertEquals(array(1, 2, 3), $result->arg1);
+    }
+
+    /**
+     * @test
+     * @dataProvider orderByProvider
+     */
+    public function testOrderBy_givenUnsortedValues_sortIt($values, $orderBy, $direction, $expected)
+    {
+        $actual = FluentTraversable::from($values)
+            ->orderBy($orderBy, $direction)
+            ->toArray();
+
+        $this->assertSame($expected, $actual);
+    }
+
+    public function orderByProvider()
+    {
+        return array(
+            array(
+                array(
+                    array('name' => 'T'),
+                    array('name' => 'Z'),
+                    array('name' => 'A'),
+                ),
+                function($element){
+                    return $element['name'];
+                },
+                'ASC',
+                array(
+                    array('name' => 'A'),
+                    array('name' => 'T'),
+                    array('name' => 'Z'),
+                ),
+            ),
+            array(
+                array(
+                    array('name' => 'T'),
+                    array('name' => 'Z'),
+                    array('name' => 'A'),
+                ),
+                function($element){
+                    return $element['name'];
+                },
+                'DESC',
+                array(
+                    array('name' => 'Z'),
+                    array('name' => 'T'),
+                    array('name' => 'A'),
+                ),
+            ),
+        );
     }
 
     private function assertOptionWithValue($expected, Option $actual)

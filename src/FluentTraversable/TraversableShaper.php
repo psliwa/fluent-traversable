@@ -91,7 +91,7 @@ class TraversableShaper implements TraversableFlow
      *
      * @return TraversableShaper
      */
-    public function group($keyFunction)
+    public function groupBy($keyFunction)
     {
         $this->checkTerminalOperation();
 
@@ -106,6 +106,20 @@ class TraversableShaper implements TraversableFlow
      * @return TraversableShaper
      */
     public function order($comparator = null)
+    {
+        $this->checkTerminalOperation();
+
+        $this->operations[] = array(__FUNCTION__, func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return TraversableShaper
+     */
+    public function orderBy($valFunction, $direction = 'ASC')
     {
         $this->checkTerminalOperation();
 
