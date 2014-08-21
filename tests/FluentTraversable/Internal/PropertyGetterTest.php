@@ -86,6 +86,11 @@ class PropertyGetterTest extends \PHPUnit_Framework_TestCase
                 Puppet::object()->getProperty2(),
                 'p2',
             ),
+            array(
+                new \ArrayObject(array('name' => 'value')),
+                'name',
+                'value',
+            )
         );
     }
 }

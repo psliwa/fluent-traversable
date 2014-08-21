@@ -42,6 +42,10 @@ class PropertyGetter
                 return $object->$property;
             }
 
+            if($object instanceof \ArrayAccess) {
+                return $object[$property];
+            }
+
             throw new \RuntimeException(sprintf('Property "%s" cannot be read', $property));
         }
     }
