@@ -36,6 +36,28 @@ class TraversableShaperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     */
+    public function defineShaperAsVarargs_everyArgumentShouldBeOneElementOfArray()
+    {
+        //given
+
+        $shaper = TraversableShaper::varargs()
+            ->map(function($value){
+                return strtoupper($value);
+            })
+            ->toArray();
+
+        //when
+
+        $actual = $shaper('a', 'b', 'C');
+
+        //then
+
+        $this->assertSame(array('A', 'B', 'C'), $actual);
+    }
+
+    /**
+     * @test
      * @expectedException \RuntimeException
      */
     public function defineShaper_executeTwoTerminalOperations_throwException()

@@ -224,6 +224,51 @@ is that, `FluentTraversable` needs input array when object is created and it sho
 doesn't need array when object is created and can be invoked multiple times with different input arrays. Internally
 `TraversableShaper` uses `FluentTraversable` instance ;) You should threat `TraversableShaper` as tool to compose functions.
 
+`TraversableShaper` has also varargs version, you can create that version using `TraversableShaper::varargs` method. When
+in previous example instead `TraversableShaper::create()` would be `TraversableShaper::varargs()`, shaper would be used
+in this way: `$maxEvenPrinter(1, 3, 5, 2, 4)` (few arguments instead of array).
+
+### TraversableShaper as predicate / mapping function
+
+You can use `TraversableShaper` to create predicate or mapping function when you use `FluentTraversable`.
+
+Example:
+
+I have an array of patients, I want to know percentage of female patients grouped by blood type.
+
+```php
+
+    $patients = array(...);
+    
+    $info = FluentTraversable::from($patients)
+        ->groupBy(get::value('bloodType'))
+        ->map(
+            TraversableShaper::create()
+                ->partition(is::eq('sex', 'female'))
+                ->map(call::func('count'))
+                ->collect(function($elements){
+                    list($femalesCount, $malesCount) = $elements;
+                    return $femalesCount / ($femalesCount + $malesCount) * 100;
+                })
+        )
+        ->toMap();
+```
+
+> Directly chaining from `TraversableShaper::create()` is not always safe, some methods does not return `TraversableShaper`,
+> in example above chaining is safe. You cannot chain when one of the method call returns `Option` type. Methods that 
+> returns option type are: `reduce`, `firstMatch`, `max`, `min`, `first`, `last`. When you after all want to chain directly
+> from `TraversableShaper::create()` and use terminal operation that returns `Option`, you can apply a trick:
+>
+> ```php
+>
+>   ->map(
+>       $f = TraversableShaper::create(), $f
+>            ->firstMatch(is::eq('name', 'Stefan'))
+>            ->getOrElse('Not found')
+>   )
+>
+> ```
+
 <a name="predicates"></a>
 ## Predicates
 

@@ -15,9 +15,11 @@ class TraversableShaper implements TraversableFlow
 {
     private $operations = array();
     private $terminalOperation;
+    private $useVarargs = false;
 
-    protected function __construct()
+    protected function __construct($useVarargs = false)
     {
+        $this->useVarargs = $useVarargs;
     }
 
     /**
@@ -28,6 +30,16 @@ class TraversableShaper implements TraversableFlow
     public static function create()
     {
         return new static();
+    }
+
+    /**
+     * Creates empty shaper that supports variable number of arguments
+     *
+     * @return TraversableShaper
+     */
+    public static function varargs()
+    {
+        return new static(true);
     }
 
     /**
@@ -469,6 +481,8 @@ class TraversableShaper implements TraversableFlow
      */
     public function __invoke($traversable)
     {
+        $traversable = $this->useVarargs ? func_get_args() : $traversable;
+
         $result = FluentTraversable::from($traversable);
 
         foreach($this->operations as $operation) {
@@ -492,7 +506,7 @@ class TraversableShaper implements TraversableFlow
      */
     public function apply($traversable)
     {
-        return $this($traversable);
+        return call_user_func_array($this, func_get_args());
     }
 
     private function markTerminalOperation($method)
