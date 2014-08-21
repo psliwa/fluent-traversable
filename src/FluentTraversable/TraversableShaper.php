@@ -4,6 +4,7 @@
 namespace FluentTraversable;
 
 
+use FluentTraversable\Internal\NonCallablePuppet;
 use PhpOption\Option;
 
 /**
@@ -325,7 +326,7 @@ class TraversableShaper implements TraversableFlow
      */
     private function optionPuppet()
     {
-        $puppet = Puppet::record();
+        $puppet = NonCallablePuppet::record();
         $this->operations[] = $puppet;
 
         return $puppet;

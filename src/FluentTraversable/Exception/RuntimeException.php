@@ -4,10 +4,10 @@
 namespace FluentTraversable\Exception;
 
 /**
- * Exception interface
+ * RuntimeException class
  *
  * @author Piotr Śliwa <peter.pl7@gmail.com>
  */
-interface Exception
+class RuntimeException extends \RuntimeException implements Exception
 {
 }

@@ -401,7 +401,7 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \FluentTraversable\Exception\Exception
+     * @expectedException \FluentTraversable\Exception\RuntimeException
      */
     public function testIndexBy_indexCollision_throwEx()
     {

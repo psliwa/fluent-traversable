@@ -2,7 +2,8 @@
 
 namespace FluentTraversable;
 
-use FluentTraversable\Exception\Exception;
+use FluentTraversable\Exception\InvalidArgumentException;
+use FluentTraversable\Exception\RuntimeException;
 use FluentTraversable\Semantics\is;
 use PhpOption\None;
 use PhpOption\Option;
@@ -81,6 +82,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function map($func)
     {
+        InvalidArgumentException::assertCallback($func, __METHOD__);
+
         foreach($this->elements as $index => &$value) {
             $value = call_user_func($func, $value, $index);
         }
@@ -95,6 +98,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function order($comparator = null)
     {
+        InvalidArgumentException::assertCallbackIfNotNull($comparator, __METHOD__);
+
         if($comparator === null) {
             asort($this->elements);
         } else {
@@ -111,6 +116,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function orderBy($valFunction, $direction = 'ASC')
     {
+        InvalidArgumentException::assertCallback($valFunction, __METHOD__);
+
         $direction = strtoupper($direction);
         $aGreaterValue = $direction === 'ASC' ? 1 : -1;
 
@@ -143,6 +150,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function filter($predicate)
     {
+        InvalidArgumentException::assertCallback($predicate, __METHOD__);
+
         $elements = array();
 
         foreach($this->elements as $index => $value) {
@@ -175,6 +184,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function groupBy($keyFunction)
     {
+        InvalidArgumentException::assertCallback($keyFunction, __METHOD__);
+
         $elements = array();
 
         foreach($this->elements as $index => $value) {
@@ -194,13 +205,15 @@ class FluentTraversable implements TraversableFlow
      */
     public function indexBy($indexFunction)
     {
+        InvalidArgumentException::assertCallback($indexFunction, __METHOD__);
+
         $elements = array();
 
         foreach($this->elements as $index => $value) {
             $newIndex = call_user_func($indexFunction, $value, $index);
 
             if(array_key_exists($newIndex, $elements)) {
-                throw new Exception(
+                throw new RuntimeException(
                     sprintf(
                         'Index collision occurred in indexBy function, two elements ("%s", "%s") with index "%s"',
                         self::getTypeOf($elements[$newIndex]),
@@ -225,6 +238,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function partition($predicate)
     {
+        InvalidArgumentException::assertCallback($predicate, __METHOD__);
+
         $this->groupBy(function($value, $index) use($predicate){
             return !call_user_func($predicate, $value, $index);
         });
@@ -295,6 +310,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function flatMap($func)
     {
+        InvalidArgumentException::assertCallback($func, __METHOD__);
+
         return $this
             ->map($func)
             ->flatten();
@@ -372,7 +389,7 @@ class FluentTraversable implements TraversableFlow
             ->filter(is::false('optional'));
 
         if($requiredParameters->size() > 1) {
-            throw new \InvalidArgumentException(sprintf('Constructor of "%s" has more than 1 required parameter', $className));
+            throw new InvalidArgumentException(sprintf('Constructor of "%s" has more than 1 required parameter', $className));
         }
 
         $constructorArgs = self::from($parameters)
@@ -386,7 +403,7 @@ class FluentTraversable implements TraversableFlow
     private function getClassFromClassName($className)
     {
         if (!class_exists($className)) {
-            throw new \InvalidArgumentException(sprintf('Class "%s" does not exist', $className));
+            throw new InvalidArgumentException(sprintf('Class "%s" does not exist', $className));
         }
 
         return  new \ReflectionClass($className);
@@ -397,7 +414,7 @@ class FluentTraversable implements TraversableFlow
         $constructor = $class->getConstructor();
 
         if (!$constructor || !$constructor->isPublic()) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf('Class "%s" has not defined public constructor', $class->getName())
             );
         }
@@ -445,6 +462,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function max($comparator = null)
     {
+        InvalidArgumentException::assertCallbackIfNotNull($comparator, __METHOD__);
+
         if(!$this->elements) {
             return None::create();
         }
@@ -464,6 +483,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function min($comparator = null)
     {
+        InvalidArgumentException::assertCallbackIfNotNull($comparator, __METHOD__);
+
         if(!$this->elements) {
             return None::create();
         }
@@ -498,6 +519,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function firstMatch($predicate)
     {
+        InvalidArgumentException::assertCallback($predicate, __METHOD__);
+
         foreach($this->elements as $index => $value) {
             if(call_user_func($predicate, $value, $index)) {
                 return Option::fromValue($value);
@@ -512,6 +535,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function reduce($biOperation)
     {
+        InvalidArgumentException::assertCallback($biOperation, __METHOD__);
+
         if(!$this->elements) {
             return None::create();
         }
@@ -526,6 +551,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function reduceFromIdentity($identity, $binaryOperation)
     {
+        InvalidArgumentException::assertCallback($binaryOperation, __METHOD__);
+
         return array_reduce($this->elements, $binaryOperation, $identity);
     }
 
@@ -544,6 +571,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function allMatch($predicate)
     {
+        InvalidArgumentException::assertCallback($predicate, __METHOD__);
+
         foreach($this->elements as $index => $value) {
             if(!call_user_func($predicate, $value, $index)) {
                 return false;
@@ -560,6 +589,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function anyMatch($predicate)
     {
+        InvalidArgumentException::assertCallback($predicate, __METHOD__);
+
         foreach($this->elements as $index => $value) {
             if(call_user_func($predicate, $value, $index)) {
                 return true;
@@ -576,6 +607,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function noneMatch($predicate)
     {
+        InvalidArgumentException::assertCallback($predicate, __METHOD__);
+
         foreach($this->elements as $index => $value) {
             if(call_user_func($predicate, $value, $index)) {
                 return false;
@@ -590,6 +623,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function collect($collector)
     {
+        InvalidArgumentException::assertCallback($collector, __METHOD__);
+
         return call_user_func($collector, $this->elements);
     }
 
@@ -602,6 +637,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function each($func)
     {
+        InvalidArgumentException::assertCallback($func, __METHOD__);
+
         foreach($this->elements as $index => $value) {
             call_user_func($func, $value, $index);
         }

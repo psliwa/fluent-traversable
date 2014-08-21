@@ -91,7 +91,7 @@ interface TraversableFlow
      * @param callable $indexFunction
      * @return TraversableFlow
      *
-     * @throws \FluentTraversable\Exception\Exception
+     * @throws \FluentTraversable\Exception\RuntimeException
      */
     public function indexBy($indexFunction);
 
