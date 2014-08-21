@@ -357,6 +357,45 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
         ), $actual);
     }
 
+    public function testIndexBy()
+    {
+        $actual = FluentTraversable::from(range(1, 4))
+            ->indexBy(function($value){
+                return $value + 3;
+            })
+            ->toMap();
+
+        $this->assertSame(array(
+            4 => 1,
+            5 => 2,
+            6 => 3,
+            7 => 4,
+        ), $actual);
+    }
+
+    /**
+     * @test
+     * @expectedException \FluentTraversable\Exception\Exception
+     */
+    public function testIndexBy_indexCollision_throwEx()
+    {
+        FluentTraversable::from(range(1, 4))
+            ->indexBy(function($value){
+                return 1;
+            });
+    }
+
+    public function testIndexBy_indexBySupportsIndexes()
+    {
+        $actual = FluentTraversable::from(range(1, 4))
+            ->indexBy(function($value, $index){
+                return $index;
+            })
+            ->toMap();
+
+        $this->assertSame(array(1, 2, 3, 4), $actual);
+    }
+
     public function testPartition_givenEmptyArray_returnTwoEmptyArrays()
     {
         $actual = FluentTraversable::from(array())

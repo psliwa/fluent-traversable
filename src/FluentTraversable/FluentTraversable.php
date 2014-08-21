@@ -2,6 +2,7 @@
 
 namespace FluentTraversable;
 
+use FluentTraversable\Exception\Exception;
 use FluentTraversable\Semantics\is;
 use FluentTraversable\Semantics\the;
 use PhpOption\None;
@@ -169,6 +170,37 @@ class FluentTraversable implements TraversableFlow
         foreach($this->elements as $value) {
             $key = call_user_func($keyFunction, $value);
             $elements[$key][] = $value;
+        }
+
+        $this->elements = $elements;
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return FluentTraversable
+     */
+    public function indexBy($indexFunction)
+    {
+        $elements = array();
+
+        foreach($this->elements as $index => $value) {
+            $newIndex = call_user_func($indexFunction, $value, $index);
+
+            if(array_key_exists($newIndex, $elements)) {
+                throw new Exception(
+                    sprintf(
+                        'Index collision occurred in indexBy function, two elements ("%s", "%s") with index "%s"',
+                        self::getTypeOf($elements[$newIndex]),
+                        self::getTypeOf($value),
+                        $newIndex
+                    )
+                );
+            }
+
+            $elements[$newIndex] = $value;
         }
 
         $this->elements = $elements;

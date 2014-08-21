@@ -81,6 +81,17 @@ interface TraversableFlow
     public function groupBy($keyFunction);
 
     /**
+     * Re-indexes elements using provided function. Use this function only when you are sure the indexes for all elements
+     * are unique. If indexes will duplicate, exception will be thrown.
+     *
+     * @param callable $indexFunction
+     * @return TraversableFlow
+     *
+     * @throws \FluentTraversable\Exception\Exception
+     */
+    public function indexBy($indexFunction);
+
+    /**
      * Orders elements by natural order or using comparing function
      *
      * @param callable|null $comparator Comparing function
