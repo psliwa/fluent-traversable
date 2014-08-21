@@ -22,5 +22,20 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
             array(Functions::getPropertyValue('name'), array('name' => 'Piotr'), 'Piotr'),
         );
     }
+
+    public function testOneArgFunction()
+    {
+        $argsNum = null;
+
+        $innerFunction = function() use(&$argsNum){
+            $argsNum = func_num_args();
+        };
+
+        $outerFunction = Functions::oneArgumentFunction($innerFunction);
+
+        $outerFunction(1, 2, 3, 4, 5);
+
+        $this->assertSame(1, $argsNum);
+    }
 }
  

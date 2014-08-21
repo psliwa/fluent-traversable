@@ -19,17 +19,23 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
     public function testMap()
     {
         $actual = FluentTraversable::from(array('A', 'b', 'C'))
-            ->map('strtolower')
+            ->map(function($value, $index){
+                return strtolower($value).$index;
+            })
             ->toArray();
 
-        $this->assertSame(array('a', 'b', 'c'), $actual);
+        $this->assertSame(array('a0', 'b1', 'c2'), $actual);
     }
 
     public function testFilter()
     {
+        $test = $this;
+
         $actual = FluentTraversable::from(array(1, 2, 3, 4, 5))
-            ->filter(function($i){
-                return $i % 2 == 0;
+            ->filter(function($value, $index) use($test){
+                $test->assertEquals(1, $value - $index);
+
+                return $value % 2 == 0;
             })
             ->toArray();
 
@@ -204,8 +210,12 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
 
     public function testFirstMatch_givenArrayWithValues_fewValuesMatches_expectFirst()
     {
+        $test = $this;
+
         $actual = FluentTraversable::from(array(1, 2, 3, 4, 5, 6))
-            ->firstMatch(function($value){
+            ->firstMatch(function($value, $index) use($test){
+                $test->assertEquals(1, $value - $index);
+
                 return $value % 2 === 0;
             });
 
@@ -264,8 +274,12 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
 
     public function testAllMatch_givenArrayWithValue_fewValuesMatch_expectFalse()
     {
+        $test = $this;
+
         $actual = FluentTraversable::from(array(1, 2, 3, 4))
-            ->allMatch(function($value){
+            ->allMatch(function($value, $index) use($test){
+                $test->assertEquals(1, $value - $index);
+
                 return $value % 2 === 0;
             });
 
@@ -304,8 +318,12 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
 
     public function testAnyMatch_givenArrayWithValues_someValuesMatch_returnTrue()
     {
+        $test = $this;
+
         $actual = FluentTraversable::from(array(1, 2, 3))
-            ->anyMatch(function($value){
+            ->anyMatch(function($value, $index) use($test){
+                $test->assertEquals(1, $value - $index);
+
                 return $value % 2 === 0;
             });
 
@@ -344,8 +362,12 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
 
     public function testGroupBy()
     {
+        $test = $this;
+
         $actual = FluentTraversable::from(range(1, 9))
-            ->groupBy(function($value){
+            ->groupBy(function($value, $index) use($test){
+                $test->assertEquals(1, $value - $index);
+
                 return $value % 3;
             })
             ->toMap();
@@ -359,8 +381,12 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
 
     public function testIndexBy()
     {
+        $test = $this;
+
         $actual = FluentTraversable::from(range(1, 4))
-            ->indexBy(function($value){
+            ->indexBy(function($value, $index) use($test){
+                $test->assertEquals(1, $value - $index);
+
                 return $value + 3;
             })
             ->toMap();
@@ -383,17 +409,6 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
             ->indexBy(function($value){
                 return 1;
             });
-    }
-
-    public function testIndexBy_indexBySupportsIndexes()
-    {
-        $actual = FluentTraversable::from(range(1, 4))
-            ->indexBy(function($value, $index){
-                return $index;
-            })
-            ->toMap();
-
-        $this->assertSame(array(1, 2, 3, 4), $actual);
     }
 
     public function testPartition_givenEmptyArray_returnTwoEmptyArrays()
@@ -426,8 +441,12 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
 
     public function testPartition_givenArrayWithRangeOfNumbers_makeParityPartition()
     {
+        $test = $this;
+
         $actual = FluentTraversable::from(range(1, 9))
-            ->partition(function($value){
+            ->partition(function($value, $index) use($test){
+                $test->assertEquals(1, $value - $index);
+
                 return $value % 2 === 0;
             })
             ->toMap();
@@ -523,7 +542,9 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
     public function testFlatMap()
     {
         $actual = FluentTraversable::from(array('some', 'text', 'to', 'flat', 'map'))
-            ->flatMap('str_split')
+            ->flatMap(function($value){
+                return str_split($value);
+            })
             ->toArray();
 
         $this->assertSame(array('s', 'o', 'm', 'e', 't', 'e', 'x', 't', 't', 'o', 'f', 'l', 'a', 't', 'm', 'a', 'p'), $actual);

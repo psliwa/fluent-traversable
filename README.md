@@ -79,6 +79,9 @@ The same code using `FluentTraversable`:
 
 ```
 
+> In examples `toMap` and `toArray` functions are used to convert elements to array. The difference between those
+> two functions is `toArray` **re-indexes elements** (starts from "0" index), `toMap` **preserves indexes**.
+
 There are no loops, if statements, it looks straightforward, flow is clear and explicit (when you now what `filter`, 
 `flatMap`, `map` etc methods are doing - as I said before the basics functional programming patters are needed ;)).
 
@@ -100,6 +103,29 @@ might use `Predicates` class (or `is` class alias - it will add some semantics t
 
 Nested paths in predicates and `get::value` function are supported, so this code works as expected: 
 `get::value('address.city.name')`.
+
+In the most of functions (where make it sense) to predicate/mapping function are provided two arguments: element value
+and element index:
+
+```php
+    FluentTraversable::from(array('a' => 'A', 'b' => 'B'))
+        ->map(function($value, $index){
+            return $value.$index;
+        })
+        ->toMap();
+        //result will be: array('a' => 'Aa', 'b' => 'Bb')
+```
+
+When you won't index to be passed as second argument, you could use `call::func($func)` function. It is very helpful
+especially when you want to use php build-in function that has optional second argument with different meaning, for 
+example `str_split`:
+
+```php
+    FluentTraversable::from(array('some', 'values'))
+        ->flatMap(call::func('str_split'))
+        ->toArray();
+        //result will be: array('s', 'o', 'm', 'e', 'v', 'a', 'l', 'u', 'e')
+```
 
 `FluentTraversable` has a lot of useful methods: `map`, `flatMap`, `filter`, `unique`, `groupBy`, `orderBy`, `allMatch`,
 `anyMatch`, `noneMatch`, `firstMatch`, `max`, `min`, `reduce`, `toArray`, `toMap` and more. All that methods belong to

@@ -18,4 +18,11 @@ class Functions
             return $propertyGetter->getValue($object, $property);
         };
     }
-} 
+
+    public static function oneArgumentFunction($innerFunction)
+    {
+        return function($value) use($innerFunction) {
+            return call_user_func($innerFunction, $value);
+        };
+    }
+}

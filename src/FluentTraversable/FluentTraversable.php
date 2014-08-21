@@ -4,7 +4,6 @@ namespace FluentTraversable;
 
 use FluentTraversable\Exception\Exception;
 use FluentTraversable\Semantics\is;
-use FluentTraversable\Semantics\the;
 use PhpOption\None;
 use PhpOption\Option;
 
@@ -82,7 +81,10 @@ class FluentTraversable implements TraversableFlow
      */
     public function map($func)
     {
-        $this->elements = array_map($func, $this->elements);
+        foreach($this->elements as $index => &$value) {
+            $value = call_user_func($func, $value, $index);
+        }
+
         return $this;
     }
 
@@ -141,7 +143,15 @@ class FluentTraversable implements TraversableFlow
      */
     public function filter($predicate)
     {
-        $this->elements = array_filter($this->elements, $predicate);
+        $elements = array();
+
+        foreach($this->elements as $index => $value) {
+            if(call_user_func($predicate, $value, $index)) {
+                $elements[$index] = $value;
+            }
+        }
+
+        $this->elements = $elements;
 
         return $this;
     }
@@ -167,8 +177,8 @@ class FluentTraversable implements TraversableFlow
     {
         $elements = array();
 
-        foreach($this->elements as $value) {
-            $key = call_user_func($keyFunction, $value);
+        foreach($this->elements as $index => $value) {
+            $key = call_user_func($keyFunction, $value, $index);
             $elements[$key][] = $value;
         }
 
@@ -215,8 +225,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function partition($predicate)
     {
-        $this->groupBy(function($value) use($predicate){
-            return !call_user_func($predicate, $value);
+        $this->groupBy(function($value, $index) use($predicate){
+            return !call_user_func($predicate, $value, $index);
         });
 
         for($i=0; $i<2; $i++) {
@@ -488,8 +498,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function firstMatch($predicate)
     {
-        foreach($this->elements as $value) {
-            if(call_user_func($predicate, $value)) {
+        foreach($this->elements as $index => $value) {
+            if(call_user_func($predicate, $value, $index)) {
                 return Option::fromValue($value);
             }
         }
@@ -534,8 +544,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function allMatch($predicate)
     {
-        foreach($this->elements as $value) {
-            if(!call_user_func($predicate, $value)) {
+        foreach($this->elements as $index => $value) {
+            if(!call_user_func($predicate, $value, $index)) {
                 return false;
             }
         }
@@ -550,8 +560,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function anyMatch($predicate)
     {
-        foreach($this->elements as $value) {
-            if(call_user_func($predicate, $value)) {
+        foreach($this->elements as $index => $value) {
+            if(call_user_func($predicate, $value, $index)) {
                 return true;
             }
         }
@@ -566,8 +576,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function noneMatch($predicate)
     {
-        foreach($this->elements as $value) {
-            if(call_user_func($predicate, $value)) {
+        foreach($this->elements as $index => $value) {
+            if(call_user_func($predicate, $value, $index)) {
                 return false;
             }
         }
@@ -592,8 +602,8 @@ class FluentTraversable implements TraversableFlow
      */
     public function each($func)
     {
-        foreach($this->elements as $value) {
-            call_user_func($func, $value);
+        foreach($this->elements as $index => $value) {
+            call_user_func($func, $value, $index);
         }
     }
 }

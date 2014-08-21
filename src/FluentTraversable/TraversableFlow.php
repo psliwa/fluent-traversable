@@ -15,7 +15,11 @@ interface TraversableFlow
     //intermediate operations
 
     /**
-     * Transforms each element using given function
+     * Transforms each element using given function.
+     *
+     * Element value will be provided as first argument of $func, element index will be provided as second argument, so
+     * if you want to use functions with more than one argument as a map function (for example strtolower), you should
+     * use call::func('strtolower') to suppress second argument that have would be an index.
      *
      * @param callable $func Function that should transform an argument
      * @return TraversableFlow
@@ -30,7 +34,7 @@ interface TraversableFlow
      * Example:
      * <code>
      *     FluentTraversable::from(array('some', 'words'))
-     *          ->flatMap('str_split')
+     *          ->flatMap(call::func('str_split'))
      *          ->toArray();
      *
      *     //result:

@@ -15,7 +15,9 @@ class TraversableShaperTest extends \PHPUnit_Framework_TestCase
         //given
 
         $shaper = TraversableShaper::create()
-            ->map('strtoupper')
+            ->map(function($value){
+                return strtoupper($value);
+            })
             ->filter(function($value){
                 return $value[0] === 'A';
             })
@@ -51,7 +53,9 @@ class TraversableShaperTest extends \PHPUnit_Framework_TestCase
     {
         TraversableShaper::create()
             ->toArray()
-            ->map('strtolower');
+            ->map(function($value){
+                return strtolower($value);
+            });
     }
 
     /**
