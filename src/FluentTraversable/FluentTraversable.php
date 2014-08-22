@@ -88,6 +88,8 @@ class FluentTraversable implements TraversableFlow
             $value = call_user_func($func, $value, $index);
         }
 
+        reset($this->elements);
+
         return $this;
     }
 

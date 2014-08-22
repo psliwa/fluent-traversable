@@ -656,6 +656,56 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
     }
 
+    /**
+     * @test
+     * @dataProvider resetArrayInternalPointerProvider
+     */
+    public function testResetArrayInternalPointer($method, $func = null)
+    {
+        $actual = FluentTraversable::from(array(1, 2, 3, 4, 5, 6))
+            ->$method($func)
+            ->first()
+            ->getOrElse(null);
+
+        $this->assertNotNull($actual);
+    }
+
+    public function resetArrayInternalPointerProvider()
+    {
+        return array(
+            array(
+                'map',
+                function($value){
+                    return $value;
+                },
+            ),
+            array(
+                'filter',
+                function($value){
+                    return true;
+                },
+            ),
+            array(
+                'groupBy',
+                function($value){
+                    return $value;
+                },
+            ),
+            array(
+                'indexBy',
+                function($value){
+                    return $value;
+                },
+            ),
+            array(
+                'partition',
+                function($value){
+                    return $value % 2 === 0;
+                }
+            )
+        );
+    }
+
     public function orderByProvider()
     {
         return array(
