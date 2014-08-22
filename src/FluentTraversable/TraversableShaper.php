@@ -4,6 +4,7 @@
 namespace FluentTraversable;
 
 
+use FluentTraversable\Exception\InvalidArgumentException;
 use FluentTraversable\Internal\NonCallablePuppet;
 use PhpOption\Option;
 
@@ -14,13 +15,17 @@ use PhpOption\Option;
  */
 class TraversableShaper implements TraversableFlow
 {
+    const ARG_TYPE_TRAVERSABLE = 1;
+    const ARG_TYPE_VARARGS = 2;
+    const ARG_TYPE_ONE_SINGLE_VALUE_ARG = 3;
+
     private $operations = array();
     private $terminalOperation;
-    private $useVarargs = false;
+    private $argumentType = false;
 
-    protected function __construct($useVarargs = false)
+    protected function __construct($argType)
     {
-        $this->useVarargs = $useVarargs;
+        $this->argumentType = $argType;
     }
 
     /**
@@ -30,7 +35,7 @@ class TraversableShaper implements TraversableFlow
      */
     public static function create()
     {
-        return new static();
+        return new static(self::ARG_TYPE_TRAVERSABLE);
     }
 
     /**
@@ -40,7 +45,17 @@ class TraversableShaper implements TraversableFlow
      */
     public static function varargs()
     {
-        return new static(true);
+        return new static(self::ARG_TYPE_VARARGS);
+    }
+
+    /**
+     * Creates empty shaper that accepts only one single value argument
+     *
+     * @return TraversableShaper
+     */
+    public static function singleValue()
+    {
+        return new static(self::ARG_TYPE_ONE_SINGLE_VALUE_ARG);
     }
 
     /**
@@ -520,7 +535,14 @@ class TraversableShaper implements TraversableFlow
      */
     public function __invoke($traversable)
     {
-        $traversable = $this->useVarargs ? func_get_args() : $traversable;
+        switch($this->argumentType) {
+            case self::ARG_TYPE_VARARGS:
+                $traversable = func_get_args();
+                break;
+            case self::ARG_TYPE_ONE_SINGLE_VALUE_ARG:
+                $traversable = func_num_args() ? array(func_get_arg(0)) : array();
+                break;
+        }
 
         $result = FluentTraversable::from($traversable);
 
