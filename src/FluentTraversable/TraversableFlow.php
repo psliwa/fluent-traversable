@@ -96,6 +96,14 @@ interface TraversableFlow
     public function indexBy($indexFunction);
 
     /**
+     * Merges given traversable to current elements
+     *
+     * @param array|FluentTraversable|\Traversable $traversable
+     * @return TraversableFlow
+     */
+    public function merge($traversable);
+
+    /**
      * Orders elements by natural order or using comparing function
      *
      * @param callable|null $comparator Comparing function

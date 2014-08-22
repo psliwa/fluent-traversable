@@ -258,6 +258,20 @@ class TraversableShaper implements TraversableFlow
      *
      * @return TraversableShaper
      */
+    public function merge($traversable)
+    {
+        $this->checkTerminalOperation();
+
+        $this->operations[] = array(__FUNCTION__, func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return TraversableShaper
+     */
     public function allMatch($predicate)
     {
         $this->markTerminalOperation(__FUNCTION__);

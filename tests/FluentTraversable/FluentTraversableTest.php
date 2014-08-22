@@ -656,6 +656,15 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
     }
 
+    public function testMerge()
+    {
+        $actual = FluentTraversable::from(array('a' => 'A', 'b' => 'B', 1, 2, 3))
+            ->merge(array('a' => 'C', 1, 5))
+            ->toMap();
+
+        $this->assertSame(array('a' => 'C', 'b' => 'B', 1, 2, 3, 1, 5), $actual);
+    }
+
     /**
      * @test
      * @dataProvider resetArrayInternalPointerProvider

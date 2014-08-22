@@ -310,6 +310,18 @@ class FluentTraversable implements TraversableFlow
      *
      * @return FluentTraversable
      */
+    public function merge($traversable)
+    {
+        $this->elements = array_merge($this->elements, self::from($traversable)->toMap());
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return FluentTraversable
+     */
     public function flatMap($func)
     {
         InvalidArgumentException::assertCallback($func, __METHOD__);
