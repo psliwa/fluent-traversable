@@ -349,7 +349,31 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      */
+    public function maxBy($valFunction)
+    {
+        $this->markTerminalOperation(__FUNCTION__);
+
+        $this->operations[] = array(__FUNCTION__, func_get_args());
+
+        return $this->optionPuppet();
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function min($comparator = null)
+    {
+        $this->markTerminalOperation(__FUNCTION__);
+
+        $this->operations[] = array(__FUNCTION__, func_get_args());
+
+        return $this->optionPuppet();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function minBy($valFunction)
     {
         $this->markTerminalOperation(__FUNCTION__);
 

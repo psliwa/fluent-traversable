@@ -123,14 +123,19 @@ class FluentTraversable implements TraversableFlow
         $direction = strtoupper($direction);
         $aGreaterValue = $direction === 'ASC' ? 1 : -1;
 
-        return $this->order(function($a, $b) use($valFunction, $aGreaterValue){
+        return $this->order($this->comparatorFromProducer($valFunction, $aGreaterValue));
+    }
+
+    private function comparatorFromProducer($valFunction, $aGreaterValue)
+    {
+        return function ($a, $b) use ($valFunction, $aGreaterValue) {
             $aVal = $valFunction($a);
             $bVal = $valFunction($b);
 
-            if($aVal > $bVal) return $aGreaterValue;
-            if($aVal < $bVal) return -$aGreaterValue;
+            if ($aVal > $bVal) return $aGreaterValue;
+            if ($aVal < $bVal) return -$aGreaterValue;
             return 0;
-        });
+        };
     }
 
     /**
@@ -495,6 +500,16 @@ class FluentTraversable implements TraversableFlow
     /**
      * @inheritdoc
      */
+    public function maxBy($valFunction)
+    {
+        InvalidArgumentException::assertCallbackIfNotNull($valFunction, __METHOD__);
+
+        return $this->max($this->comparatorFromProducer($valFunction, 1));
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function min($comparator = null)
     {
         InvalidArgumentException::assertCallbackIfNotNull($comparator, __METHOD__);
@@ -511,6 +526,16 @@ class FluentTraversable implements TraversableFlow
         usort($elements, $comparator);
 
         return Option::fromValue(current($elements));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function minBy($valFunction)
+    {
+        InvalidArgumentException::assertCallbackIfNotNull($valFunction, __METHOD__);
+
+        return $this->min($this->comparatorFromProducer($valFunction, 1));
     }
 
     /**

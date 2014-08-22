@@ -255,6 +255,30 @@ interface TraversableFlow
     public function max($comparator = null);
 
     /**
+     * Gets {@link Option} containing element with max value produced by provided $valFunction.
+     *
+     * Example:
+     * [code]
+     *      FluentTraversable::from(array(
+     *              array('name' => 'John', 'age' => 33),
+     *              array('name' => 'Jolka', 'age' => 21))
+     *          )
+     *          ->maxBy(get::value('age'))
+     *          //there is Option value
+     *          ->map(function($john){
+     *              //executes only for John
+     *          });
+     * [/code]
+     *
+     * @param callable $valFunction
+     * @return Option
+     *
+     * @see max
+     * @see orderBy
+     */
+    public function maxBy($valFunction);
+
+    /**
      * Gets {@link Option} containing min element by natural order or by given comparator
      *
      * @param callable|null $comparator Comparing function
@@ -263,6 +287,30 @@ interface TraversableFlow
      * @see max
      */
     public function min($comparator = null);
+
+    /**
+     * Gets {@link Option} containing element with min value produced by provided $valFunction.
+     *
+     * Example:
+     * [code]
+     *      FluentTraversable::from(array(
+     *              array('name' => 'John', 'age' => 33),
+     *              array('name' => 'Jolka', 'age' => 21))
+     *          )
+     *          ->minBy(get::value('age'))
+     *          //there is Option value
+     *          ->map(function($jolka){
+     *              //executes only for Jolka
+     *          });
+     * [/code]
+     *
+     * @param callable $valFunction
+     * @return Option
+     *
+     * @see max
+     * @see orderBy
+     */
+    public function minBy($valFunction);
 
     /**
      * Gets {@link Option} containing first element that match given predicate

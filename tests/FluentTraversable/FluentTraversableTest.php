@@ -162,6 +162,20 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($actual->isEmpty());
     }
 
+    public function testMaxBy()
+    {
+        $actual = FluentTraversable::from(array(
+            array('age' => 5),
+            array('age' => 3),
+            array('age' => 24),
+            array('age' => 8),
+        ))->maxBy(function($value){
+            return $value['age'];
+        });
+
+        $this->assertOptionWithValue(array('age' => 24), $actual);
+    }
+
     public function testMin()
     {
         $actual = FluentTraversable::from(array(3, 5, 1, 4))
@@ -186,6 +200,21 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
             ->min();
 
         $this->assertTrue($actual->isEmpty());
+    }
+
+
+    public function testMinBy()
+    {
+        $actual = FluentTraversable::from(array(
+            array('age' => 5),
+            array('age' => 3),
+            array('age' => 24),
+            array('age' => 8),
+        ))->minBy(function($value){
+            return $value['age'];
+        });
+
+        $this->assertOptionWithValue(array('age' => 3), $actual);
     }
 
     public function testFirstMatch_givenEmptyArray_returnNone()
