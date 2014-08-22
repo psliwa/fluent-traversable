@@ -11,6 +11,7 @@ To fully enjoy of this library, you should be familiar with basic patterns of fu
 1. [Installation](#installation)
 1. [FluentTraversable](#fluent)
 1. [TraversableShaper](#shaper)
+    * [TraversableShaper as predicate / mapping function](#shaperAsPredicate)
 1. [Predicates](#predicates)
 1. [Puppet](#puppet)
 1. [Contribution](#contri)
@@ -32,10 +33,10 @@ You should choose last stable version, wildcard char ("*") is only an example.
 <a name="fluent"></a>
 ## FluentTraversable
 
-Thanks to `FluentTraversable` class you can operate on arrays and collection in declarative and readable way. Ok, there is
+Thanks to `FluentTraversable` class you can operate on arrays and collection in declarative and readable way. There is
 an example.
 
-I want to get emails of male authors of books that have been released before 2007.
+*I want to get emails of male authors of books that have been released before 2007.*
 
 ```php
 
@@ -89,7 +90,7 @@ There are no loops, if statements, it looks straightforward, flow is clear and e
 value. There are `lt`, `gt`, `eq`, `not` etc methods. Closures in php are very lengthy, you have to write `function` 
 keyword, curly braces, return statement, semicolon etc - a lot of syntax noise. Closure is multiline (yes, I now it can 
 be written in single line, but it would be unreadable), so it is no very compact. To handle simple predicate cases, you 
-might use `Predicates` class (or `is` class alias - it will add some semantics to your code), but you haven't to ;)
+might use `is` class. More about predicates you can read in [Predicates](#predicates) section.
 
 `get::value('authors')` also is a shortcut for closures, this is semantic equivalent to:
 
@@ -128,11 +129,12 @@ example `str_split`:
 ```
 
 `FluentTraversable` has a lot of useful methods: `map`, `flatMap`, `filter`, `unique`, `groupBy`, `orderBy`, `allMatch`,
-`anyMatch`, `noneMatch`, `firstMatch`, `max`, `min`, `reduce`, `toArray`, `toMap` and more. All that methods belong to
-one of two groups: intermediate or terminate operations. Intermediate operation does some work on input array, modifies it
-and returns `FluentTraversable` object, so you can chain another operation. Terminate operation does some calculation on
-each element of array and returns result of this calculation. For example `size` operation returns integer that is length
-of input array, so you can not chain operation anymore.
+`anyMatch`, `noneMatch`, `firstMatch`, `maxBy`, `minBy`, `reduce`, `toArray`, `toMap` and more. List, description and examples
+of all those methods are available in [TraversableFlow][3] interface. Each method belongs to one of two groups: 
+intermediate or terminate operations. Intermediate operation does some work on input array, modifies it and returns 
+`FluentTraversable` object for further processing, so you can chain another operation. Terminate operation does some 
+calculation on each element of array and returns result of this calculation. For example `size` operation returns 
+integer that is length of input array, so you can not chain operation anymore.
 
 Example:
 
@@ -173,8 +175,19 @@ Example:
 
 If Stephen King's book was found, "Found book: TITLE" will be printed, otherwise "Not found any book...".
 
-Properly used, option is very powerful and it integrates with `FluentTraversable` perfectly.
+Properly used, option is very powerful and it integrates with `FluentTraversable` perfectly. `Option::map` method is
+very inconspicuous, but it is also very useful. Thanks to `Option::map` you can execute piece of code when value is 
+available without using `if` statement:
 
+```php
+
+    FluentTraversable::from($books)
+        ->maxBy(get::value('rating'))
+        ->map(function(Book $book){
+            $this->takeToBackpack($book);
+        });
+
+```
 
 <a name="shaper"></a>
 ## TraversableShaper
@@ -228,13 +241,20 @@ doesn't need array when object is created and can be invoked multiple times with
 in previous example instead `TraversableShaper::create()` would be `TraversableShaper::varargs()`, shaper would be used
 in this way: `$maxEvenPrinter(1, 3, 5, 2, 4)` (few arguments instead of array).
 
+Third and last version of `TraversableShaper` is version with one argument that contains single value - shaper threat
+this single value as array with 1 element. This version can be used in specific situations as predicate / mapping
+function - this will be covered in next subsection. To create mentioned shaper you should use `TraversableShaper::singleValue()`
+factory method.
+
+<a name="shaperAsPredicate"></a>
 ### TraversableShaper as predicate / mapping function
 
-You can use `TraversableShaper` to create predicate or mapping function when you use `FluentTraversable`.
+You can use `TraversableShaper` to create predicate or mapping function for `FluentTraversable`, especially
+after functions that transforms single value to array of values (`groupBy`, `partition` etc.).
 
 Example:
 
-I have an array of patients, I want to know percentage of female patients grouped by blood type.
+*We have an array of patients and we want to know percentage of female patients grouped by blood type.*
 
 ```php
 
@@ -254,10 +274,10 @@ I have an array of patients, I want to know percentage of female patients groupe
         ->toMap();
 ```
 
-> Directly chaining from `TraversableShaper::create()` is not always safe, some methods does not return `TraversableShaper`,
-> in example above chaining is safe. You cannot chain when one of the method call returns `Option` type. Methods that 
-> returns option type are: `reduce`, `firstMatch`, `max`, `min`, `first`, `last`. When you after all want to chain directly
-> from `TraversableShaper::create()` and use terminal operation that returns `Option`, you can apply a trick:
+> Directly chaining from `TraversableShaper::create()` is not always safe, some methods does not return `TraversableShaper`.
+> You cannot chain when one of the method call returns `Option` type. Methods that returns `Option` type are: `reduce`, 
+> `firstMatch`, `max`, `min`, `first`, `last`. When you after all want to chain directly from 
+> `TraversableShaper::create()` and use terminal operation that returns `Option`, you can apply a trick:
 >
 > ```php
 >
@@ -268,6 +288,27 @@ I have an array of patients, I want to know percentage of female patients groupe
 >   )
 >
 > ```
+
+As I said before, there is also `TraversableShaper::singleValue()` method to create function with one argument that contains
+single value. It might be useful to create predicates or mapping functions for single value.
+
+Example:
+
+*We want to find doctors that all patients are women (gynecologists?).*
+
+```php
+    
+    $doctors = array(/* some doctors */);
+
+    $doctors = FluentTraversable::from($doctors)
+        ->filter(
+            TraversableShaper::singleValue()
+                ->flatMap(get::value('patients'))
+                ->allMatch(is::eq('sex', 'female'))
+        )
+        ->toArray();
+
+```
 
 <a name="predicates"></a>
 ## Predicates
@@ -365,3 +406,4 @@ Any suggestions, PR, bug reports etc. are welcome ;)
 
 [1]: http://www.nurkiewicz.com/2013/08/optional-in-java-8-cheat-sheet.html
 [2]: https://github.com/schmittjoh/php-option
+[3]: https://github.com/psliwa/fluent-traversable/blob/master/src/FluentTraversable/TraversableFlow.php
