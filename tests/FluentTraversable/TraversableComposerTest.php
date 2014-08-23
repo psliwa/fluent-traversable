@@ -5,16 +5,16 @@ namespace FluentTraversable;
 
 use PhpOption\Option;
 
-class TraversableShaperTest extends \PHPUnit_Framework_TestCase
+class TraversableComposerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
      */
-    public function defineShaper_invokeItOnSomeArrays_itShouldProceedInput()
+    public function defineComposer_invokeItOnSomeArrays_itShouldProceedInput()
     {
         //given
 
-        $shaper = TraversableShaper::create()
+        $composer = TraversableComposer::forArray()
             ->map(function($value){
                 return strtoupper($value);
             })
@@ -27,7 +27,7 @@ class TraversableShaperTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actual = $shaper(array('Asia', 'Apple', 'php', 'android', 'Android', 'tv', 'php'));
+        $actual = $composer(array('Asia', 'Apple', 'php', 'android', 'Android', 'tv', 'php'));
 
         //then
 
@@ -37,11 +37,11 @@ class TraversableShaperTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function defineShaperAsVarargs_everyArgumentShouldBeOneElementOfArray()
+    public function defineComposerAsVarargs_everyArgumentShouldBeOneElementOfArray()
     {
         //given
 
-        $shaper = TraversableShaper::varargs()
+        $composer = TraversableComposer::forVarargs()
             ->map(function($value){
                 return strtoupper($value);
             })
@@ -49,7 +49,7 @@ class TraversableShaperTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actual = $shaper('a', 'b', 'C');
+        $actual = $composer('a', 'b', 'C');
 
         //then
 
@@ -59,11 +59,11 @@ class TraversableShaperTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function defineShaperWithOneSingleValueArg_acceptsOnlyOneArg()
+    public function defineComposerWithOneSingleValueArg_acceptsOnlyOneArg()
     {
         //given
 
-        $shaper = TraversableShaper::singleValue()
+        $composer = TraversableComposer::forValue()
             ->map(function($value){
                 return strtoupper($value);
             })
@@ -71,7 +71,7 @@ class TraversableShaperTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actual = $shaper('a', 'b', 'C');
+        $actual = $composer('a', 'b', 'C');
 
         //then
 
@@ -82,9 +82,9 @@ class TraversableShaperTest extends \PHPUnit_Framework_TestCase
      * @test
      * @expectedException \RuntimeException
      */
-    public function defineShaper_executeTwoTerminalOperations_throwException()
+    public function defineComposer_executeTwoTerminalOperations_throwException()
     {
-        TraversableShaper::create()
+        TraversableComposer::forArray()
             ->toArray()
             ->toMap();
     }
@@ -93,9 +93,9 @@ class TraversableShaperTest extends \PHPUnit_Framework_TestCase
      * @test
      * @expectedException \RuntimeException
      */
-    public function defineShaper_executeIntermediateOpAfterTerminalOp_throwException()
+    public function defineComposer_executeIntermediateOpAfterTerminalOp_throwException()
     {
-        TraversableShaper::create()
+        TraversableComposer::forArray()
             ->toArray()
             ->map(function($value){
                 return strtolower($value);
@@ -105,9 +105,9 @@ class TraversableShaperTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function defineShaper_executeTerminalOpWithOptionAsResult()
+    public function defineComposer_executeTerminalOpWithOptionAsResult()
     {
-        $max = TraversableShaper::create();
+        $max = TraversableComposer::forArray();
         $max
             ->max()
             ->map(function($value){

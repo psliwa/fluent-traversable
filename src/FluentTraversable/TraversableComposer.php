@@ -3,8 +3,6 @@
 
 namespace FluentTraversable;
 
-
-use FluentTraversable\Exception\InvalidArgumentException;
 use FluentTraversable\Internal\NonCallablePuppet;
 use PhpOption\Option;
 
@@ -13,11 +11,11 @@ use PhpOption\Option;
  *
  * @author Piotr Śliwa <peter.pl7@gmail.com>
  */
-class TraversableShaper implements TraversableFlow
+class TraversableComposer implements TraversableFlow
 {
-    const ARG_TYPE_TRAVERSABLE = 1;
+    const ARG_TYPE_ARRAY = 1;
     const ARG_TYPE_VARARGS = 2;
-    const ARG_TYPE_ONE_SINGLE_VALUE_ARG = 3;
+    const ARG_TYPE_VALUE = 3;
 
     private $operations = array();
     private $terminalOperation;
@@ -29,39 +27,41 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * Creates empty shaper
+     * Creates composer that creates function accepting one array or \Traversable argument
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
-    public static function create()
+    public static function forArray()
     {
-        return new static(self::ARG_TYPE_TRAVERSABLE);
+        return new static(self::ARG_TYPE_ARRAY);
     }
 
     /**
-     * Creates empty shaper that supports variable number of arguments
+     * Creates composer that creates function accepting varargs, each argument is threaten as an array element
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
-    public static function varargs()
+    public static function forVarargs()
     {
         return new static(self::ARG_TYPE_VARARGS);
     }
 
     /**
-     * Creates empty shaper that accepts only one single value argument
+     * Creates composer that creates function accepting one argument that will be only element of array. This factory
+     * method is similar to {@link TraversableComposer::forVarargs}, the difference is all arguments are ignored except
+     * the first.
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
-    public static function singleValue()
+    public static function forValue()
     {
-        return new static(self::ARG_TYPE_ONE_SINGLE_VALUE_ARG);
+        return new static(self::ARG_TYPE_VALUE);
     }
 
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function map($func)
     {
@@ -75,7 +75,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function flatMap($func)
     {
@@ -89,7 +89,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function filter($predicate)
     {
@@ -103,7 +103,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function unique()
     {
@@ -117,7 +117,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function groupBy($keyFunction)
     {
@@ -131,7 +131,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function indexBy($indexFunction)
     {
@@ -145,7 +145,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function order($comparator = null)
     {
@@ -159,7 +159,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function orderBy($valFunction, $direction = 'ASC')
     {
@@ -173,7 +173,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function skip($i)
     {
@@ -187,7 +187,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function limit($i)
     {
@@ -201,7 +201,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function partition($predicate)
     {
@@ -215,7 +215,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function intersect($traversable)
     {
@@ -229,7 +229,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function difference($traversable)
     {
@@ -243,7 +243,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function keys()
     {
@@ -257,7 +257,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function append($element)
     {
@@ -271,7 +271,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function merge($traversable)
     {
@@ -285,7 +285,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function allMatch($predicate)
     {
@@ -299,7 +299,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function anyMatch($predicate)
     {
@@ -313,7 +313,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function noneMatch($predicate)
     {
@@ -327,7 +327,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function size()
     {
@@ -412,7 +412,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function toArray()
     {
@@ -426,7 +426,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function toMap()
     {
@@ -440,7 +440,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function to($className)
     {
@@ -454,7 +454,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function collect($collector)
     {
@@ -468,7 +468,7 @@ class TraversableShaper implements TraversableFlow
     /**
      * @inheritdoc
      *
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function join($separator)
     {
@@ -518,7 +518,7 @@ class TraversableShaper implements TraversableFlow
 
     /**
      * @inheritdoc
-     * @return TraversableShaper
+     * @return TraversableComposer
      */
     public function reduceFromIdentity($identity, $binaryOperation)
     {
@@ -531,7 +531,7 @@ class TraversableShaper implements TraversableFlow
 
     /**
      * @param $traversable
-     * @return mixed Depends on shaper instrumentation
+     * @return mixed Depends on composer instrumentation
      */
     public function __invoke($traversable)
     {
@@ -539,7 +539,7 @@ class TraversableShaper implements TraversableFlow
             case self::ARG_TYPE_VARARGS:
                 $traversable = func_get_args();
                 break;
-            case self::ARG_TYPE_ONE_SINGLE_VALUE_ARG:
+            case self::ARG_TYPE_VALUE:
                 $traversable = func_num_args() ? array(func_get_arg(0)) : array();
                 break;
         }
@@ -560,10 +560,10 @@ class TraversableShaper implements TraversableFlow
     }
 
     /**
-     * Applies shaper on given traversable
+     * Applies composed function on given arguments
      *
-     * @param array|\Traversable $traversable
-     * @return mixed Depends on shaper instrumentation
+     * @param mixed $traversable Depends on composer instrumentation
+     * @return mixed Depends on composer instrumentation
      */
     public function apply($traversable)
     {

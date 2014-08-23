@@ -2,6 +2,7 @@
 
 
 namespace FluentTraversable;
+
 use FluentTraversable\Internal\PropertyGetter;
 
 /**

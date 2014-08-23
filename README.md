@@ -10,8 +10,8 @@ To fully enjoy of this library, you should be familiar with basic patterns of fu
 
 1. [Installation](#installation)
 1. [FluentTraversable](#fluent)
-1. [TraversableShaper](#shaper)
-    * [TraversableShaper as predicate / mapping function](#shaperAsPredicate)
+1. [TraversableComposer](#composer)
+    1. [TraversableComposer as predicate / mapping function](#composerAsPredicate)
 1. [Predicates](#predicates)
 1. [Puppet](#puppet)
 1. [Contribution](#contri)
@@ -80,6 +80,8 @@ The same code using `FluentTraversable`:
 
 ```
 
+> **IMPORTANT**
+>
 > In examples `toMap` and `toArray` functions are used to convert elements to array. The difference between those
 > two functions is `toArray` **re-indexes elements** (starts from "0" index), `toMap` **preserves indexes**.
 
@@ -189,20 +191,20 @@ available without using `if` statement:
 
 ```
 
-<a name="shaper"></a>
-## TraversableShaper
+<a name="composer"></a>
+## TraversableComposer
 
-`TraversableShaper` is a tool to compose complex operations on arrays. You can define one complex operation thanks to
-shaper, and apply it multiple times on any array. `TraversableShaper` has very similar interface to `FluentTraversable`
+`TraversableComposer` is a tool to compose complex operations on arrays. You can define one complex operation thanks to
+composer, and apply it multiple times on any array. `TraversableComposer` has very similar interface to `FluentTraversable`
 (those two classes implements the same interface: `TraversableFlow`).
 
 There is an example:
 
 ```php
 
-    $maxEvenPrinter = TraversableShaper::create();
+    $maxEvenPrinter = TraversableComposer::forArray();
 
-    //very important is, to not chain directly from `create()` method, first you should assign created object
+    //very important is, to not chain directly from `forArray()` method, first you should assign created object
     //to variable, and then using reference to object you can compose your function
 
     $maxEvenPrinter
@@ -232,25 +234,58 @@ Ok, we have `$maxEvenPrinter` object, what's next?
 
 ```
 
-As I said, `TraversableShaper` has almost the same methods as `FluentTraversable`. The difference between those two classes
-is that, `FluentTraversable` needs input array when object is created and it should be used once, `TraversableShaper`
+As I said, `TraversableComposer` has almost the same methods as `FluentTraversable`. The difference between those two classes
+is that, `FluentTraversable` needs input array when object is created and it should be used once, `TraversableComposer`
 doesn't need array when object is created and can be invoked multiple times with different input arrays. Internally
-`TraversableShaper` uses `FluentTraversable` instance ;) You should threat `TraversableShaper` as tool to compose functions.
+`TraversableComposer` uses `FluentTraversable` instance ;) You should threat `TraversableComposer` as tool to compose functions.
 
-`TraversableShaper` has also varargs version, you can create that version using `TraversableShaper::varargs` method. When
-in previous example instead `TraversableShaper::create()` would be `TraversableShaper::varargs()`, shaper would be used
-in this way: `$maxEvenPrinter(1, 3, 5, 2, 4)` (few arguments instead of array).
+**`TraversableComposer` has three factory methods that differ in arguments that are accepted by created function:**
 
-Third and last version of `TraversableShaper` is version with one argument that contains single value - shaper threat
-this single value as array with 1 element. This version can be used in specific situations as predicate / mapping
-function - this will be covered in next subsection. To create mentioned shaper you should use `TraversableShaper::singleValue()`
-factory method.
+* `TraversableComposer::forArray()` - created function accepts one array/traversable argument
+ 
+    ```php
 
-<a name="shaperAsPredicate"></a>
-### TraversableShaper as predicate / mapping function
+        $func = TraversableComposer::forArray();
+        $func-> /* some chaining methods */;
+            
+        $func(array('value1', 'value2', 'value3'));
 
-You can use `TraversableShaper` to create predicate or mapping function for `FluentTraversable`, especially
-after functions that transforms single value to array of values (`groupBy`, `partition` etc.).
+    ```
+
+* `TraversableComposer::forVarargs()` - created function accepts variable number of arguments (varargs):
+
+    ```php
+    
+        $func = TraversableComposer::forVarargs();
+        $func-> /* some chaining methods */;
+        
+        $func('value1', 'value2', 'value3');
+    
+    ```
+    
+* `TraversableComposer::forValue()` - created function accepts one argument that will be threaten as only element of array.
+This method is similar to `TraversableComposer::forVarargs()`, the difference is all arguments are ignored except the first.
+
+    ```php
+    
+        $func = TraversableComposer::forValue();
+        $func-> /* some chaining methods */;
+    
+        $func('value1', 'this value will be ignored')
+    
+    ```
+
+> **IMPORTANT**
+>
+> There is also `compose` factory that contains that three mentioned methods. It adds semantic value to your code, reduces
+> syntax noise and makes it more readable. `compose` class is recommended way of creating `TraversableComposer` instances
+> and in next examples that class will be used.
+
+<a name="composerAsPredicate"></a>
+### TraversableComposer as predicate / mapping function
+
+You can use `compose` (factory for `TraversableComposer`) to create predicate or mapping function for `FluentTraversable`,
+especially after functions that transforms single value to array of values (`groupBy`, `partition` etc.).
 
 Example:
 
@@ -263,7 +298,7 @@ Example:
     $info = FluentTraversable::from($patients)
         ->groupBy(get::value('bloodType'))
         ->map(
-            TraversableShaper::create()
+            compose::forArray()
                 ->partition(is::eq('sex', 'female'))
                 ->map(call::func('count'))
                 ->collect(function($elements){
@@ -274,23 +309,25 @@ Example:
         ->toMap();
 ```
 
-> Directly chaining from `TraversableShaper::create()` is not always safe, some methods does not return `TraversableShaper`.
-> You cannot chain when one of the method call returns `Option` type. Methods that returns `Option` type are: `reduce`, 
-> `firstMatch`, `max`, `min`, `first`, `last`. When you after all want to chain directly from 
-> `TraversableShaper::create()` and use terminal operation that returns `Option`, you can apply a trick:
+> **IMPORTANT**
+>
+> Directly chaining from `compose::forArray()` (and other factory methods) is not always safe, some methods does not 
+> return `TraversableComposer`, but `Option` object. Methods that returns `Option` are: `reduce`, `firstMatch`, `max`, 
+> `min`, `first`, `last`. When you after all want to chain directly from `compose::forArray()` and use terminal 
+> operation that returns `Option`, you can apply a trick:
 >
 > ```php
 >
 >   ->map(
->       $f = TraversableShaper::create(), $f
+>       $f = compose::forArray(), $f
 >            ->firstMatch(is::eq('name', 'Stefan'))
 >            ->getOrElse('Not found')
 >   )
 >
 > ```
 
-As I said before, there is also `TraversableShaper::singleValue()` method to create function with one argument that contains
-single value. It might be useful to create predicates or mapping functions for single value.
+There is also `compose::forValue()` method to create function with one argument that contains single value. It might be 
+useful to create predicates or mapping functions for single value.
 
 Example:
 
@@ -302,7 +339,7 @@ Example:
 
     $doctors = FluentTraversable::from($doctors)
         ->filter(
-            TraversableShaper::singleValue()
+            compose::forValue()
                 ->flatMap(get::value('patients'))
                 ->allMatch(is::eq('sex', 'female'))
         )
@@ -379,7 +416,7 @@ Example:
 ```
 
 `Puppet` supports property access, array access and method calls with arguments. Originally it was created to simplify `map` and
-`flatMap` operations in `FluentTraversable`. It is is also used internally by `TraversableShaper`, but maybe you will find 
+`flatMap` operations in `FluentTraversable`. It is is also used internally by `TraversableComposer`, but maybe you will find 
 another use case for `Puppet`.
 
 Puppet has two factory methods: `record` and `object` - those methods are the same, `object` method was created only for 
