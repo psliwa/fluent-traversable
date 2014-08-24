@@ -1,6 +1,6 @@
-**IMPORTANT**: This library is not stable yet, API can still change.
-
 # Fluent Traversable
+
+[![Build Status](https://travis-ci.org/psliwa/fluent-traversable.svg?branch=master)](https://travis-ci.org/psliwa/fluent-traversable)
 
 **FluentTraversable** is very small utility library that adds a bit of **functional programming** to php, especially for arrays 
 and collections. This library is inspired by java8 stream framework, guava FluentIterable and Scala functional features.
@@ -33,10 +33,10 @@ You should choose last stable version, wildcard char ("*") is only an example.
 <a name="fluent"></a>
 ## FluentTraversable
 
-Thanks to `FluentTraversable` class you can operate on arrays and collection in declarative and readable way. There is
-an example.
+Thanks to `FluentTraversable` class you can operate on arrays and collection in declarative and readable way. There is a
+simple example.
 
-*I want to get emails of male authors of books that have been released before 2007.*
+*We want to get emails of male authors of books that have been released before 2007.*
 
 ```php
 
@@ -83,7 +83,8 @@ The same code using `FluentTraversable`:
 > **IMPORTANT**
 >
 > In examples `toMap` and `toArray` functions are used to convert elements to array. The difference between those
-> two functions is `toArray` **re-indexes elements** (starts from "0" index), `toMap` **preserves indexes**.
+> two functions is `toArray` **re-indexes elements**, `toMap` **preserves indexes**. You should use `toArray` method
+> when indexes in your use case are not important, otherwise you should use `toMap`.
 
 There are no loops, if statements, it looks straightforward, flow is clear and explicit (when you now what `filter`, 
 `flatMap`, `map` etc methods are doing - as I said before the basics functional programming patters are needed ;)).
@@ -108,7 +109,7 @@ Nested paths in predicates and `get::value` function are supported, so this code
 `get::value('address.city.name')`.
 
 In the most of functions (where make it sense) to predicate/mapping function are provided two arguments: element value
-and element index:
+and index:
 
 ```php
     FluentTraversable::from(array('a' => 'A', 'b' => 'B'))
@@ -152,7 +153,7 @@ Example:
 There are few terminal operations that returns `Option` value (if you don't know what is Option or Optional value pattern,
 follow this links: [php-option][2], [Optional explanation in Java][1]). For example `firstMatch` method could find nothing,
 so instead return null or adding second optional argument to provide default value, `Option` object is returned. `Option`
-object is a wrapper for value, it can has value, but it haven't to. You should threat `Option` as collection with 0 or 1
+object is a wrapper for value, it can contain value, but it haven't to. You should threat `Option` as collection with 0 or 1
 value. `Option` class provides few familiar methods to `FluentTraversable`, for example `map` and `filter`. You can get 
 value from `Option` by `getOrElse` method:
 
@@ -277,7 +278,7 @@ This method is similar to `TraversableComposer::forVarargs()`, the difference is
 
 > **IMPORTANT**
 >
-> There is also `compose` factory that contains that three mentioned methods. It adds semantic value to your code, reduces
+> There is also `compose` factory class that contains that three mentioned methods. It adds semantic value to your code, reduces
 > syntax noise and makes it more readable. `compose` class is recommended way of creating `TraversableComposer` instances
 > and in next examples that class will be used.
 
@@ -425,11 +426,6 @@ is recommended for this purpose.
 
 `the` class is alias to `Puppet`, it only adds semantic meaning to using `Puppet` in `FluentTraversable` context:
 `->map(the::object()->getName())` is much more readable than `->map(Puppet::record()->getName())`.
-
-Puppet was inspired by
-[Extractor class](https://github.com/letsdrink/ouzo-utils/blob/master/src/Ouzo/Utilities/Extractor.php) of 
-[ouzo-utils](https://github.com/letsdrink/ouzo-utils) library. `FluentTraversable` doesn't use `Extractor` class, because 
-in this library is a lot of stuff that would not be used by `FluentTraversable`.
 
 <a name="contri"></a>
 ## Contribution
