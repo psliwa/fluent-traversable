@@ -540,10 +540,10 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(array(1, 2, 3), $actual);
     }
 
-    public function testIntersect()
+    public function testIntersection()
     {
         $actual = FluentTraversable::from(array(1, 2, 3, 4, 5))
-            ->intersect(array(3, 4, 6))
+            ->intersection(array(3, 4, 6))
             ->toArray();
 
         $this->assertSame(array(3, 4), $actual);
@@ -662,6 +662,38 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
     {
         FluentTraversable::from(array(1, 2, 3))
             ->to('FluentTraversable\\FluentTraversableTest_OneRequiredClassArg');
+    }
+
+    public function testGet_valueExists()
+    {
+        $actual = FluentTraversable::from(array(1, 2, 3))
+            ->get(1);
+
+        $this->assertOptionWithValue(2, $actual);
+    }
+
+    public function testGet_valueExistsButItIsFalse_expectedSome()
+    {
+        $actual = FluentTraversable::from(array(true, false))
+            ->get(1);
+
+        $this->assertOptionWithValue(false, $actual);
+    }
+
+    public function testGet_valueExistsButIsNull_expectedNone()
+    {
+        $actual = FluentTraversable::from(array(null, false))
+            ->get(0);
+
+        $this->assertFalse($actual->isDefined());
+    }
+
+    public function testGet_valueDoesNotExist_expectedNone()
+    {
+        $actual = FluentTraversable::from(array(null, false))
+            ->get(3);
+
+        $this->assertFalse($actual->isDefined());
     }
 
     public function testTo_givenValidClass_givenConstructorHasOneArrayHintedArg_ok()

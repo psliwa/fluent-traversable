@@ -314,7 +314,7 @@ Example:
 >
 > Directly chaining from `compose::forArray()` (and other factory methods) is not always safe, some methods does not 
 > return `TraversableComposer`, but `Option` object. Methods that returns `Option` are: `reduce`, `firstMatch`, `max`, 
-> `min`, `first`, `last`. When you after all want to chain directly from `compose::forArray()` and use terminal 
+> `min`, `first`, `last`, `get`. When you after all want to chain directly from `compose::forArray()` and use terminal 
 > operation that returns `Option`, you can apply a trick:
 >
 > ```php

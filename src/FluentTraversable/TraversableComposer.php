@@ -217,7 +217,7 @@ class TraversableComposer implements TraversableFlow
      *
      * @return TraversableComposer
      */
-    public function intersect($traversable)
+    public function intersection($traversable)
     {
         $this->checkTerminalOperation();
 
@@ -483,6 +483,18 @@ class TraversableComposer implements TraversableFlow
      * @inheritdoc
      */
     public function first()
+    {
+        $this->markTerminalOperation(__FUNCTION__);
+
+        $this->operations[] = array(__FUNCTION__, func_get_args());
+
+        return $this->optionPuppet();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get($index)
     {
         $this->markTerminalOperation(__FUNCTION__);
 

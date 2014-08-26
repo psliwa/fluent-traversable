@@ -291,7 +291,7 @@ class FluentTraversable implements TraversableFlow
      *
      * @return FluentTraversable
      */
-    public function intersect($traversable)
+    public function intersection($traversable)
     {
         $this->elements = array_intersect($this->elements, self::from($traversable)->toMap());
 
@@ -474,6 +474,14 @@ class FluentTraversable implements TraversableFlow
     public function first()
     {
         return Option::fromValue(current($this->elements), false);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get($index)
+    {
+        return isset($this->elements[$index]) ? Option::fromValue($this->elements[$index]) : None::create();
     }
 
     /**

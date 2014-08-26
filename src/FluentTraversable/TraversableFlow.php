@@ -175,7 +175,7 @@ interface TraversableFlow
      *
      * @see difference
      */
-    public function intersect($traversable);
+    public function intersection($traversable);
 
     /**
      * Removes elements that exists also in given array
@@ -183,7 +183,7 @@ interface TraversableFlow
      * @param array|\Traversable|FluentTraversable $traversable
      * @return TraversableFlow
      *
-     * @see intersect
+     * @see intersection
      */
     public function difference($traversable);
 
@@ -382,6 +382,15 @@ interface TraversableFlow
     public function first();
 
     /**
+     * Gets {@link Option) containing element stored in given index. When index does not exist or value is strictly equal
+     * to null, {@link None} is returned, otherwise {@link Some}
+     *
+     * @param $index
+     * @return Option
+     */
+    public function get($index);
+
+    /**
      * Gets {@link Option) containing last element in array
      *
      * @return Option
@@ -412,4 +421,4 @@ interface TraversableFlow
      * @see reduce
      */
     public function reduceFromIdentity($identity, $binaryOperation);
-} 
+}
