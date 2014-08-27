@@ -91,6 +91,20 @@ class TraversableComposer implements TraversableFlow
      *
      * @return TraversableComposer
      */
+    public function flatten()
+    {
+        $this->checkTerminalOperation();
+
+        $this->operations[] = array(__FUNCTION__, func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return TraversableComposer
+     */
     public function filter($predicate)
     {
         $this->checkTerminalOperation();
@@ -533,6 +547,19 @@ class TraversableComposer implements TraversableFlow
      * @return TraversableComposer
      */
     public function reduceFromIdentity($identity, $binaryOperation)
+    {
+        $this->markTerminalOperation(__FUNCTION__);
+
+        $this->operations[] = array(__FUNCTION__, func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     * @return TraversableComposer
+     */
+    public function each($func)
     {
         $this->markTerminalOperation(__FUNCTION__);
 

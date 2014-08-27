@@ -49,6 +49,27 @@ interface TraversableFlow
     public function flatMap($func);
 
     /**
+     * Merges each elements into one array. Each element should be an array, Traversable or {@link FluentTraversable}
+     *
+     * Example:
+     * <code>
+     *     FluentTraversable::from(array(
+     *              array('value1', 'value2'),
+     *              array('value3', 'value4'),
+     *          ))
+     *          ->flatten()
+     *          ->toArray();
+     *
+     *     //result:
+     *     array('value1', 'value2', 'value3', 'value4')
+     * </code>
+     *
+     * @return TraversableFlow
+     * @throws \LogicException When at least one element is not array / Traversable / FLuentTraversable
+     */
+    public function flatten();
+
+    /**
      * Removes elements that do not match given predicate
      *
      * @param callable $predicate Function that evaluates element to boolean value
@@ -421,4 +442,14 @@ interface TraversableFlow
      * @see reduce
      */
     public function reduceFromIdentity($identity, $binaryOperation);
+
+    /**
+     * Performs given function on each element
+     *
+     * @param callable $func
+     * @return TraversableFlow
+     *
+     * @see map
+     */
+    public function each($func);
 }

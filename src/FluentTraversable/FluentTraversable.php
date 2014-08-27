@@ -340,7 +340,6 @@ class FluentTraversable implements TraversableFlow
      * @inheritdoc
      *
      * @return FluentTraversable
-     * @throws \LogicException
      */
     public function flatten()
     {
@@ -676,11 +675,9 @@ class FluentTraversable implements TraversableFlow
     }
 
     /**
-     * Performs given function on each element
+     * @inheritdoc
      *
-     * @param callable $func
-     *
-     * @see map
+     * @return void
      */
     public function each($func)
     {
