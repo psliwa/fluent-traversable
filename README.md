@@ -2,9 +2,52 @@
 
 [![Build Status](https://travis-ci.org/psliwa/fluent-traversable.svg?branch=master)](https://travis-ci.org/psliwa/fluent-traversable)
 
-**FluentTraversable** is very small utility library that adds a bit of **functional programming** to php, especially for arrays 
+**FluentTraversable** is small tool that adds a bit of **functional programming** to php, especially for arrays 
 and collections. This library is inspired by java8 stream framework, guava FluentIterable and Scala functional features.
-To fully enjoy of this library, you should be familiar with basic patterns of functional programming.
+To fully enjoy of this library, knowledge of basic functional patterns is welcome.
+
+**Summary and key features**:
+
+* allows to working with arrays and everything that implements `Traversable` interface
+* based on functional programming concepts: 
+    * shortened `Closure`s - [predicates](#predicates), [value extractors](#get-value)
+    * [function composition](#composer)
+    * support for [`Option`](#option) type (what is and how to use `Option` type[?][1] Quote mark is clickable ;))
+    * standard [functional operations][3] on collections
+* simplifies algorithms' code. Lets see few code examples and try to rewrite that examples using loops and ifs: 
+    * [simple example](#example1)
+    * [more complex example with function composition](#example2)
+    * [another example with function composition](#example3)
+* makes code more declarative, readable, less complex and more maintainable
+* simple, considered interface: 95% of methods with 0 or 1 argument, 5% of methods with 2 arguments, 0% of methods with
+3 or more arguments
+* no magic in implementation, full support for IDE code completion (not every fluent library has that feature - unbelievable...)
+* inspired by few other technologies, but fully adapted to php world. This library is not a blind copy of other tools.
+* framework independent, only 1 small external dependency - [php-option][1]. This library won't download a half of internet.
+
+# Quick example
+
+*We have an array of patients and we want to know percentage of female patients grouped by blood type.*
+
+```php
+
+    $patients = array(...);
+    
+    $info = FluentTraversable::from($patients)
+        ->groupBy(get::value('bloodType'))
+        ->map(
+            compose::forArray()
+                ->partition(is::eq('sex', 'female'))
+                ->map(call::func('count'))
+                ->collect(function($elements){
+                    list($femalesCount, $malesCount) = $elements;
+                    return $femalesCount / ($femalesCount + $malesCount) * 100;
+                })
+        )
+        ->toMap();
+```
+
+Explanation and more information about this example you get [here](#example2).
 
 # ToC
 
@@ -59,6 +102,7 @@ simple example.
 Ok, nested loops, nested if statements... It doesn't look good. If I use php array_map and array_filter functions, result
 wouldn't be better, would be even worst, so I omit this example.
 
+<a name="example1"></a>
 The same code using `FluentTraversable`:
 
 ```php
@@ -95,6 +139,7 @@ keyword, curly braces, return statement, semicolon etc - a lot of syntax noise. 
 be written in single line, but it would be unreadable), so it is no very compact. To handle simple predicate cases, you 
 might use `is` class. More about predicates you can read in [Predicates](#predicates) section.
 
+<a name="get-value"></a>
 `get::value('authors')` also is a shortcut for closures, this is semantic equivalent to:
 
 ```php
@@ -149,7 +194,7 @@ Example:
         ->size()//terminate operation, I cannot chain - it returns integer
 
 ```
-
+<a name="option"></a>
 There are few terminal operations that returns `Option` value (if you don't know what is Option or Optional value pattern,
 follow this links: [php-option][2], [Optional explanation in Java][1]). For example `firstMatch` method could find nothing,
 so instead return null or adding second optional argument to provide default value, `Option` object is returned. `Option`
@@ -290,6 +335,7 @@ especially after functions that transforms single value to array of values (`gro
 
 Example:
 
+<a name="example2"></a>
 *We have an array of patients and we want to know percentage of female patients grouped by blood type.*
 
 ```php
@@ -298,15 +344,21 @@ Example:
     
     $info = FluentTraversable::from($patients)
         ->groupBy(get::value('bloodType'))
+        //we have multi-dimensional array, where key is bloodType, value is array of patients
         ->map(
+            //we map array of patients for each blood type to percentage value, so lets `compose` a function
             compose::forArray()
+                //split array of patients into two arrays, first females, second males
                 ->partition(is::eq('sex', 'female'))
+                //map those arrays to its size, so we have number of females and males
                 ->map(call::func('count'))
+                //calculate a percent
                 ->collect(function($elements){
                     list($femalesCount, $malesCount) = $elements;
                     return $femalesCount / ($femalesCount + $malesCount) * 100;
                 })
         )
+        //get our result with index preserving 
         ->toMap();
 ```
 
@@ -332,6 +384,7 @@ useful to create predicates or mapping functions for single value.
 
 Example:
 
+<a name="example3"></a>
 *We want to find doctors that all patients are women (gynecologists?).*
 
 ```php
@@ -399,6 +452,22 @@ Few predicates (`null`, `notNull`, `false`, `true`, `blank`, `notBlank`) have al
     
 There are also logical predicates (`not`, `andX`, `orX`), but when you need to create complex predicate maybe the
 better and more readable way is just to use closure.
+
+Predicates can also be used with **grouping functions**. Now there is only `count::of()` function.
+ 
+Example:
+
+*We want to find doctors with less than 5 patients*
+
+```php
+
+    $doctors = array(...);
+    
+    $doctors = FluentTraversable::from($doctors)
+        ->filter(is::lt(count::of('patients'), 5))
+        ->toArray();
+
+```
 
 <a name="puppet"></a>
 ## Puppet
