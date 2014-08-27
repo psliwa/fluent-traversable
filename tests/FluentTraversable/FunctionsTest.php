@@ -37,5 +37,12 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(1, $argsNum);
     }
+
+    public function testCount()
+    {
+        $count = Functions::count('values');
+
+        $this->assertEquals(3, $count(array('values' => array(1, 2, 3))));
+    }
 }
  

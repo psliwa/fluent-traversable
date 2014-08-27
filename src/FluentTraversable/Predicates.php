@@ -33,6 +33,11 @@ class Predicates
         };
     }
 
+    public static function notEq($property, $value = null)
+    {
+        return self::not(call_user_func_array(array(__CLASS__, 'eq'), func_get_args()));
+    }
+
     private static function fixBinaryArgs($property, $value, $argsCount)
     {
         if($argsCount === 1) {
@@ -50,6 +55,12 @@ class Predicates
         return function($object) use($property, $value, $propertyGetter){
             return $propertyGetter->getValue($object, $property) === $value;
         };
+    }
+
+    public static function notIdentical($property, $value = null)
+    {
+        //call_user_* instead self::identical() to maintain original number of passed args
+        return self::not(call_user_func_array(array(__CLASS__, 'identical'), func_get_args()));
     }
 
     public static function false($property = null)
@@ -141,6 +152,11 @@ class Predicates
         };
     }
 
+    public static function notIn($property, $values = null)
+    {
+        return self::not(call_user_func_array(array(__CLASS__, 'in'), func_get_args()));
+    }
+
     public static function notNull($property = null)
     {
         $propertyGetter = self::getPropertyGetter();
@@ -162,5 +178,19 @@ class Predicates
         return function($object) use($property, $needle, $propertyGetter) {
             return strpos($propertyGetter->getValue($object, $property), $needle) !== false;
         };
+    }
+
+    public static function blank($property = null)
+    {
+        $propertyGetter = self::getPropertyGetter();
+        return function($object) use($propertyGetter, $property){
+            $result = $propertyGetter->getValue($object, $property);
+            return empty($result);
+        };
+    }
+
+    public static function notBlank($property = null)
+    {
+        return self::not(self::blank($property));
     }
 }

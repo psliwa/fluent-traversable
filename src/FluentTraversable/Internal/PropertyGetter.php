@@ -14,7 +14,7 @@ class PropertyGetter
     public function getValue($object, $path)
     {
         if($path === null) return $object;
-        if($path instanceof Puppet) return $path($object);
+        if(is_callable($path)) return call_user_func($path, $object);
 
         $properties = explode('.', $path);
 

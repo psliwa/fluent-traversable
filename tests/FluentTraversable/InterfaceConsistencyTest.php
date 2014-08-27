@@ -33,7 +33,7 @@ class InterfaceConsistencyTest extends \PHPUnit_Framework_TestCase
         return FluentTraversable::from($class->getMethods(\ReflectionMethod::IS_PUBLIC))
             ->map(get::value('name'))
             ->order()
-            ->filter(is::not(is::in($ignoredMethods)))
+            ->filter(is::notIn($ignoredMethods))
             ->filter(is::false('static'))
             ->filter(function($value){
                 return substr($value, 0, 2) !== '__';

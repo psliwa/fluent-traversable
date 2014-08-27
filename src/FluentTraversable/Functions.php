@@ -26,4 +26,12 @@ class Functions
             return call_user_func($innerFunction, $value);
         };
     }
+
+    public static function count($property = null)
+    {
+        $propertyGetter = new PropertyGetter();
+        return function($object) use($property, $propertyGetter) {
+            return count($propertyGetter->getValue($object, $property));
+        };
+    }
 }

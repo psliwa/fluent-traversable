@@ -4,6 +4,9 @@
 namespace FluentTraversable;
 
 
+use FluentTraversable\Semantics\count;
+use FluentTraversable\Semantics\get;
+
 class PredicatesTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -24,6 +27,11 @@ class PredicatesTest extends \PHPUnit_Framework_TestCase
                 true,
             ),
             array(
+                Predicates::eq(count::of('values'), 2),
+                array('values' => array(1, 2)),
+                true,
+            ),
+            array(
                 Predicates::eq('name', 'Piotra'),
                 array('name' => 'Piotr'),
                 false,
@@ -37,6 +45,16 @@ class PredicatesTest extends \PHPUnit_Framework_TestCase
                 Predicates::eq('Piotra'),
                 'Piotr',
                 false,
+            ),
+            array(
+                Predicates::notEq('Piotr'),
+                'Piotr',
+                false,
+            ),
+            array(
+                Predicates::notEq('Piotra'),
+                'Piotr',
+                true,
             ),
             array(
                 Predicates::not(Predicates::eq('name', 'Piotra')),
@@ -209,6 +227,11 @@ class PredicatesTest extends \PHPUnit_Framework_TestCase
                 true,
             ),
             array(
+                Predicates::notIn(array(10, 15, 30)),
+                10,
+                false,
+            ),
+            array(
                 Predicates::contains('name', 'iot'),
                 array('name' => 'Piotr'),
                 true,
@@ -319,6 +342,16 @@ class PredicatesTest extends \PHPUnit_Framework_TestCase
                 false,
             ),
             array(
+                Predicates::notIdentical(25),
+                25,
+                false,
+            ),
+            array(
+                Predicates::notIdentical(25),
+                '25',
+                true,
+            ),
+            array(
                 Predicates::null('age'),
                 array('age' => null),
                 true,
@@ -358,6 +391,61 @@ class PredicatesTest extends \PHPUnit_Framework_TestCase
                 0,
                 true,
             ),
+            array(
+                Predicates::blank(),
+                false,
+                true,
+            ),
+            array(
+                Predicates::blank(),
+                null,
+                true,
+            ),
+            array(
+                Predicates::blank(),
+                0,
+                true,
+            ),
+            array(
+                Predicates::blank(),
+                array(),
+                true,
+            ),
+            array(
+                Predicates::blank(),
+                1,
+                false,
+            ),
+            array(
+                Predicates::blank('name'),
+                array('name' => false),
+                true,
+            ),
+            array(
+                Predicates::blank('name'),
+                array('name' => null),
+                true,
+            ),
+            array(
+                Predicates::blank('name'),
+                array('name' => 0),
+                true,
+            ),
+            array(
+                Predicates::blank('name'),
+                array('name' => array()),
+                true,
+            ),
+            array(
+                Predicates::blank('name'),
+                array('name' => 1),
+                false,
+            ),
+            array(
+                Predicates::notBlank(),
+                1,
+                true,
+            )
         );
     }
 }

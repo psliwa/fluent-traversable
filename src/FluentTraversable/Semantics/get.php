@@ -3,7 +3,6 @@
 
 namespace FluentTraversable\Semantics;
 
-
 use FluentTraversable\Functions;
 
 /**
@@ -17,4 +16,4 @@ final class get
     {
         return Functions::getPropertyValue($property);
     }
-} 
+}

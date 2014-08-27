@@ -356,7 +356,8 @@ classes. Those classes are the same, `is` is an alias to `Predicates`, so you ca
 expressiveness to code). Predicates are perfect to use in `filter`, `firstMatch`, `partition`, `allMatch`, `noneMatch`,
 `anyMatch` methods of `FluentTraversable`.
 
-The most of predicates (for example: `eq`, `gt`, `qte`, `identical`, `in`, `contains`) have two versions:
+The most of predicates (for example: `eq`, `notEq`, `gt`, `qte`, `identical`, `notIdentical`, `in`, `notIn`, `contains`) 
+have two versions:
 
 * unary: `predicate($valueToCompare)`
 
@@ -376,7 +377,7 @@ The most of predicates (for example: `eq`, `gt`, `qte`, `identical`, `in`, `cont
     
     ```
 
-Few predicates (`null`, `notNull`, `false`, `true`) have also two, but different versions:
+Few predicates (`null`, `notNull`, `false`, `true`, `blank`, `notBlank`) have also two, but different versions:
 
 * not argument: `predicate()`
 
