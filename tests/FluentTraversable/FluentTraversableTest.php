@@ -428,16 +428,15 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
         ), $actual);
     }
 
-    /**
-     * @test
-     * @expectedException \FluentTraversable\Exception\RuntimeException
-     */
-    public function testIndexBy_indexCollision_throwEx()
+    public function testIndexBy_indexCollision_acceptLastElement()
     {
-        FluentTraversable::from(range(1, 4))
+        $actual = FluentTraversable::from(range(1, 4))
             ->indexBy(function($value){
                 return 1;
-            });
+            })
+            ->toMap();
+
+        $this->assertSame(array(1 => 4), $actual);
     }
 
     public function testPartition_givenEmptyArray_returnTwoEmptyArrays()

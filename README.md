@@ -21,7 +21,7 @@ To fully enjoy of this library, knowledge of basic functional patterns is welcom
 * makes code more declarative, readable, less complex and more maintainable
 * simple, considered interface: 95% of methods with 0 or 1 argument, 5% of methods with 2 arguments, 0% of methods with
 3 or more arguments
-* no magic in implementation, full support for IDE code completion (not every fluent library has that feature - unbelievable...)
+* no magic in implementation, full support for IDE code completion
 * inspired by few other technologies, but fully adapted to php world. This library is not a blind copy of other tools.
 * framework independent, only 1 small external dependency - [php-option][1]. This library won't download a half of internet.
 
@@ -133,6 +133,12 @@ The same code using `FluentTraversable`:
 There are no loops, if statements, it looks straightforward, flow is clear and explicit (when you now what `filter`, 
 `flatMap`, `map` etc methods are doing - as I said before the basics functional programming patters are needed ;)).
 
+> **IMPORTANT**
+>
+> What does `flatMap` do? It maps single values to collections of values and then merges all those collections into
+> one collection. In example above `Book` has many authors, thanks to `flatMap` we are able to extract all authors to
+> one dimensional array. When we would use `map`, on output would be array of authors' arrays.
+
 `is` class (alias to `Predicates` class) is factory for closures that have one argument and evaluate it to boolean 
 value. There are `lt`, `gt`, `eq`, `not` etc methods. Closures in php are very lengthy, you have to write `function` 
 keyword, curly braces, return statement, semicolon etc - a lot of syntax noise. Closure is multiline (yes, I now it can 
@@ -153,28 +159,30 @@ might use `is` class. More about predicates you can read in [Predicates](#predic
 Nested paths in predicates and `get::value` function are supported, so this code works as expected: 
 `get::value('address.city.name')`.
 
-In the most of functions (where make it sense) to predicate/mapping function are provided two arguments: element value
-and index:
-
-```php
-    FluentTraversable::from(array('a' => 'A', 'b' => 'B'))
-        ->map(function($value, $index){
-            return $value.$index;
-        })
-        ->toMap();
-        //result will be: array('a' => 'Aa', 'b' => 'Bb')
-```
-
-When you won't index to be passed as second argument, you could use `call::func($func)` function. It is very helpful
-especially when you want to use php build-in function that has optional second argument with different meaning, for 
-example `str_split`:
-
-```php
-    FluentTraversable::from(array('some', 'values'))
-        ->flatMap(call::func('str_split'))
-        ->toArray();
-        //result will be: array('s', 'o', 'm', 'e', 'v', 'a', 'l', 'u', 'e')
-```
+> **IMPORTANT**
+>
+> In the most of functions (where make it sense) to predicate/mapping function are provided two arguments: element value
+> and index:
+> 
+> ```php
+>     FluentTraversable::from(array('a' => 'A', 'b' => 'B'))
+>         ->map(function($value, $index){
+>             return $value.$index;
+>         })
+>         ->toMap();
+>         //result will be: array('a' => 'Aa', 'b' => 'Bb')
+> ```
+> 
+> When you won't index to be passed as second argument, you could use `call::func($func)` function. It is very helpful
+> especially when you want to use php build-in function that has optional second argument with different meaning, for 
+> example `str_split`:
+> 
+> ```php
+>     FluentTraversable::from(array('some', 'values'))
+>         ->flatMap(call::func('str_split'))
+>         ->toArray();
+>         //result will be: array('s', 'o', 'm', 'e', 'v', 'a', 'l', 'u', 'e')
+> ```
 
 `FluentTraversable` has a lot of useful methods: `map`, `flatMap`, `filter`, `unique`, `groupBy`, `orderBy`, `allMatch`,
 `anyMatch`, `noneMatch`, `firstMatch`, `maxBy`, `minBy`, `reduce`, `toArray`, `toMap` and more. List, description and examples
@@ -236,6 +244,13 @@ available without using `if` statement:
         });
 
 ```
+
+> **IMPORTANT**
+>
+> `Option` in many cases is very useful and it often simplifies the code. If you do not feel how to properly use it, 
+> check "Bigger example" section in this [article](1) and all examples with `Option` in this documentation. 
+> `Option` has `getOrElse` method, so you can eventually use it to grab the value or default value. However I recommend
+> you to learn how to properly use this pattern, in literature it is also called `Maybe` or `Optional` pattern.
 
 <a name="composer"></a>
 ## TraversableComposer
@@ -453,21 +468,23 @@ Few predicates (`null`, `notNull`, `false`, `true`, `blank`, `notBlank`) have al
 There are also logical predicates (`not`, `andX`, `orX`), but when you need to create complex predicate maybe the
 better and more readable way is just to use closure.
 
-Predicates can also be used with **grouping functions**. Now there is only `count::of()` function.
- 
-Example:
-
-*We want to find doctors with less than 5 patients*
-
-```php
-
-    $doctors = array(...);
-    
-    $doctors = FluentTraversable::from($doctors)
-        ->filter(is::lt(count::of('patients'), 5))
-        ->toArray();
-
-```
+> **IMPORTANT**
+>
+> Predicates can also be used with **grouping functions**. Now there is only `count::of()` function.
+>  
+> Example:
+> 
+> *We want to find doctors with less than 5 patients*
+> 
+> ```php
+> 
+>     $doctors = array(...);
+>     
+>     $doctors = FluentTraversable::from($doctors)
+>         ->filter(is::lt(count::of('patients'), 5))
+>         ->toArray();
+> 
+> ```
 
 <a name="puppet"></a>
 ## Puppet

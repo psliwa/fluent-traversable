@@ -218,18 +218,6 @@ class FluentTraversable implements TraversableFlow
 
         foreach($this->elements as $index => $value) {
             $newIndex = call_user_func($indexFunction, $value, $index);
-
-            if(array_key_exists($newIndex, $elements)) {
-                throw new RuntimeException(
-                    sprintf(
-                        'Index collision occurred in indexBy function, two elements ("%s", "%s") with index "%s"',
-                        self::getTypeOf($elements[$newIndex]),
-                        self::getTypeOf($value),
-                        $newIndex
-                    )
-                );
-            }
-
             $elements[$newIndex] = $value;
         }
 
