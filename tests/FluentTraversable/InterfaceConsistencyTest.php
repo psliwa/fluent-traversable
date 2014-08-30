@@ -50,7 +50,7 @@ class InterfaceConsistencyTest extends \PHPUnit_Framework_TestCase
             ),
             array(
                 'FluentTraversable\\TraversableFlow',
-                'FluentTraversable\\TraversableComposer',
+                'FluentTraversable\\FluentComposer',
             ),
         );
     }

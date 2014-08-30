@@ -13,9 +13,17 @@ use FluentTraversable\Functions;
  * function.
  *
  * @author Piotr Śliwa <peter.pl7@gmail.com>
+ *
+ * @deprecated Use {@link func#wrap()} instead
  */
 final class call
 {
+    /**
+     * @param $func
+     * @return callable
+     *
+     * @deprecated Use {@link func#wrap()} instead
+     */
     public static function func($func)
     {
         return Functions::oneArgumentFunction($func);

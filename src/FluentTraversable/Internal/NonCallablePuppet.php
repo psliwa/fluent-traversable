@@ -6,7 +6,7 @@ namespace FluentTraversable\Internal;
 use FluentTraversable\Puppet;
 
 /**
- * Puppet that is used by {@link TraversableComposer} class, it can not be passed as callback to FluentTraversable methods
+ * Puppet that is used by {@link FluentComposer} class, it can not be passed as callback to FluentTraversable methods
  *
  * @author Piotr Śliwa <peter.pl7@gmail.com>
  */

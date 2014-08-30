@@ -36,9 +36,9 @@ To fully enjoy of this library, knowledge of basic functional patterns is welcom
     $info = FluentTraversable::from($patients)
         ->groupBy(get::value('bloodType'))
         ->map(
-            compose::forArray()
+            FluentComposer::forArray()
                 ->partition(is::eq('sex', 'female'))
-                ->map(call::func('count'))
+                ->map(func::wrap('count'))
                 ->collect(function($elements){
                     list($femalesCount, $malesCount) = $elements;
                     return $femalesCount / ($femalesCount + $malesCount) * 100;
@@ -53,8 +53,8 @@ Explanation and more information about this example you get [here](#example2).
 
 1. [Installation](#installation)
 1. [FluentTraversable](#fluent)
-1. [TraversableComposer](#composer)
-    1. [TraversableComposer as predicate / mapping function](#composerAsPredicate)
+1. [FluentComposer](#composer)
+    1. [FluentComposer as predicate / mapping function](#composerAsPredicate)
 1. [Predicates](#predicates)
 1. [Puppet](#puppet)
 1. [Contribution](#contri)
@@ -173,13 +173,13 @@ Nested paths in predicates and `get::value` function are supported, so this code
 >         //result will be: array('a' => 'Aa', 'b' => 'Bb')
 > ```
 > 
-> When you won't index to be passed as second argument, you could use `call::func($func)` function. It is very helpful
+> When you won't index to be passed as second argument, you could use `func::wrap($func)` function. It is very helpful
 > especially when you want to use php build-in function that has optional second argument with different meaning, for 
 > example `str_split`:
 > 
 > ```php
 >     FluentTraversable::from(array('some', 'values'))
->         ->flatMap(call::func('str_split'))
+>         ->flatMap(func::wrap('str_split'))
 >         ->toArray();
 >         //result will be: array('s', 'o', 'm', 'e', 'v', 'a', 'l', 'u', 'e')
 > ```
@@ -253,17 +253,17 @@ available without using `if` statement:
 > you to learn how to properly use this pattern, in literature it is also called `Maybe` or `Optional` pattern.
 
 <a name="composer"></a>
-## TraversableComposer
+## FluentComposer
 
-`TraversableComposer` is a tool to compose complex operations on arrays. You can define one complex operation thanks to
-composer, and apply it multiple times on any array. `TraversableComposer` has very similar interface to `FluentTraversable`
+`FluentComposer` is a tool to compose complex operations on arrays. You can define one complex operation thanks to
+composer, and apply it multiple times on any array. `FluentComposer` has the same interface as `FluentTraversable`
 (those two classes implements the same interface: `TraversableFlow`).
 
 There is an example:
 
 ```php
 
-    $maxEvenPrinter = TraversableComposer::forArray();
+    $maxEvenPrinter = FluentComposer::forArray();
 
     //very important is, to not chain directly from `forArray()` method, first you should assign created object
     //to variable, and then using reference to object you can compose your function
@@ -295,58 +295,52 @@ Ok, we have `$maxEvenPrinter` object, what's next?
 
 ```
 
-As I said, `TraversableComposer` has almost the same methods as `FluentTraversable`. The difference between those two classes
-is that, `FluentTraversable` needs input array when object is created and it should be used once, `TraversableComposer`
+As I said, `FluentComposer` has almost the same methods as `FluentTraversable`. The difference between those two classes
+is that, `FluentTraversable` needs input array when object is created and it should be used once, `FluentComposer`
 doesn't need array when object is created and can be invoked multiple times with different input arrays. Internally
-`TraversableComposer` uses `FluentTraversable` instance ;) You should threat `TraversableComposer` as tool to compose functions.
+`FluentComposer` uses `FluentTraversable` instance ;) You should threat `FluentComposer` as tool to compose functions.
 
-**`TraversableComposer` has three factory methods that differ in arguments that are accepted by created function:**
+**`FluentComposer` has three factory methods that differ in arguments that are accepted by created function:**
 
-* `TraversableComposer::forArray()` - created function accepts one array/traversable argument
+* `FluentComposer::forArray()` - created function accepts one array/traversable argument
  
     ```php
 
-        $func = TraversableComposer::forArray();
+        $func = FluentComposer::forArray();
         $func-> /* some chaining methods */;
             
         $func(array('value1', 'value2', 'value3'));
 
     ```
 
-* `TraversableComposer::forVarargs()` - created function accepts variable number of arguments (varargs):
+* `FluentComposer::forVarargs()` - created function accepts variable number of arguments (varargs):
 
     ```php
     
-        $func = TraversableComposer::forVarargs();
+        $func = FluentComposer::forVarargs();
         $func-> /* some chaining methods */;
         
         $func('value1', 'value2', 'value3');
     
     ```
     
-* `TraversableComposer::forValue()` - created function accepts one argument that will be threaten as only element of array.
-This method is similar to `TraversableComposer::forVarargs()`, the difference is all arguments are ignored except the first.
+* `FluentComposer::forValue()` - created function accepts one argument that will be threaten as only element of array.
+This method is similar to `FluentComposer::forVarargs()`, the difference is all arguments are ignored except the first.
 
     ```php
     
-        $func = TraversableComposer::forValue();
+        $func = FluentComposer::forValue();
         $func-> /* some chaining methods */;
     
         $func('value1', 'this value will be ignored')
     
     ```
 
-> **IMPORTANT**
->
-> There is also `compose` factory class that contains that three mentioned methods. It adds semantic value to your code, reduces
-> syntax noise and makes it more readable. `compose` class is recommended way of creating `TraversableComposer` instances
-> and in next examples that class will be used.
-
 <a name="composerAsPredicate"></a>
-### TraversableComposer as predicate / mapping function
+### FluentComposer as predicate / mapping function
 
-You can use `compose` (factory for `TraversableComposer`) to create predicate or mapping function for `FluentTraversable`,
-especially after functions that transforms single value to array of values (`groupBy`, `partition` etc.).
+You can use `FluentComposer` to create predicate or mapping function for `FluentTraversable`, especially after 
+functions that transforms single value to array of values (`groupBy`, `partition` etc.).
 
 Example:
 
@@ -361,12 +355,12 @@ Example:
         ->groupBy(get::value('bloodType'))
         //we have multi-dimensional array, where key is bloodType, value is array of patients
         ->map(
-            //we map array of patients for each blood type to percentage value, so lets `compose` a function
-            compose::forArray()
+            //we map array of patients for each blood type to percentage value, so lets compose a function
+            FluentComposer::forArray()
                 //split array of patients into two arrays, first females, second males
                 ->partition(is::eq('sex', 'female'))
                 //map those arrays to its size, so we have number of females and males
-                ->map(call::func('count'))
+                ->map(func::wrap('count'))
                 //calculate a percent
                 ->collect(function($elements){
                     list($femalesCount, $malesCount) = $elements;
@@ -379,22 +373,22 @@ Example:
 
 > **IMPORTANT**
 >
-> Directly chaining from `compose::forArray()` (and other factory methods) is not always safe, some methods does not 
-> return `TraversableComposer`, but `Option` object. Methods that returns `Option` are: `reduce`, `firstMatch`, `max`, 
-> `min`, `first`, `last`, `get`. When you after all want to chain directly from `compose::forArray()` and use terminal 
+> Directly chaining from `FluentComposer::forArray()` (and other factory methods) is not always safe, some methods does not 
+> return `FluentComposer`, but `Option` object. Methods that returns `Option` are: `reduce`, `firstMatch`, `max`, 
+> `min`, `first`, `last`, `get`. When you after all want to chain directly from `FluentComposer::forArray()` and use terminal 
 > operation that returns `Option`, you can apply a trick:
 >
 > ```php
 >
 >   ->map(
->       $f = compose::forArray(), $f
+>       $f = FluentComposer::forArray(), $f
 >            ->firstMatch(is::eq('name', 'Stefan'))
 >            ->getOrElse('Not found')
 >   )
 >
 > ```
 
-There is also `compose::forValue()` method to create function with one argument that contains single value. It might be 
+There is also `FluentComposer::forValue()` method to create function with one argument that contains single value. It might be 
 useful to create predicates or mapping functions for single value.
 
 Example:
@@ -408,7 +402,7 @@ Example:
 
     $doctors = FluentTraversable::from($doctors)
         ->filter(
-            compose::forValue()
+            FluentComposer::forValue()
                 ->flatMap(get::value('patients'))
                 ->allMatch(is::eq('sex', 'female'))
         )
@@ -504,7 +498,7 @@ Example:
 ```
 
 `Puppet` supports property access, array access and method calls with arguments. Originally it was created to simplify `map` and
-`flatMap` operations in `FluentTraversable`. It is is also used internally by `TraversableComposer`, but maybe you will find 
+`flatMap` operations in `FluentTraversable`. It is is also used internally by `FluentComposer`, but maybe you will find 
 another use case for `Puppet`.
 
 Puppet has two factory methods: `record` and `object` - those methods are the same, `object` method was created only for 

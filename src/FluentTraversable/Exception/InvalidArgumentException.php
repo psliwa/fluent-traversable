@@ -31,8 +31,8 @@ class InvalidArgumentException extends \InvalidArgumentException implements Exce
         } else if($callback instanceof NonCallablePuppet) {
             throw new self(
                 sprintf(
-                    'TraversableComposer passed to method "%s" cannot be directly chained when terminal operation that you called returns Option. '.
-                    'You should use "$f = compose::forArray(), $f->..." walkaround if you want to use TraversableComposer '.
+                    'FluentComposer passed to method "%s" cannot be directly chained when terminal operation that you called returns Option. '.
+                    'You should use "$f = compose::forArray(), $f->..." walkaround if you want to use FluentComposer '.
                     'as predicate or mapping function in FluentTraversable. For more details refer to documentation.',
                     $method
                 )

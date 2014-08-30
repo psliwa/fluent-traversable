@@ -5,7 +5,7 @@ namespace FluentTraversable;
 
 use PhpOption\Option;
 
-class TraversableComposerTest extends \PHPUnit_Framework_TestCase
+class FluentComposerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -14,7 +14,7 @@ class TraversableComposerTest extends \PHPUnit_Framework_TestCase
     {
         //given
 
-        $composer = TraversableComposer::forArray()
+        $composer = FluentComposer::forArray()
             ->map(function($value){
                 return strtoupper($value);
             })
@@ -41,7 +41,7 @@ class TraversableComposerTest extends \PHPUnit_Framework_TestCase
     {
         //given
 
-        $composer = TraversableComposer::forVarargs()
+        $composer = FluentComposer::forVarargs()
             ->map(function($value){
                 return strtoupper($value);
             })
@@ -63,7 +63,7 @@ class TraversableComposerTest extends \PHPUnit_Framework_TestCase
     {
         //given
 
-        $composer = TraversableComposer::forValue()
+        $composer = FluentComposer::forValue()
             ->map(function($value){
                 return strtoupper($value);
             })
@@ -84,7 +84,7 @@ class TraversableComposerTest extends \PHPUnit_Framework_TestCase
      */
     public function defineComposer_executeTwoTerminalOperations_throwException()
     {
-        TraversableComposer::forArray()
+        FluentComposer::forArray()
             ->toArray()
             ->toMap();
     }
@@ -95,7 +95,7 @@ class TraversableComposerTest extends \PHPUnit_Framework_TestCase
      */
     public function defineComposer_executeIntermediateOpAfterTerminalOp_throwException()
     {
-        TraversableComposer::forArray()
+        FluentComposer::forArray()
             ->toArray()
             ->map(function($value){
                 return strtolower($value);
@@ -107,7 +107,7 @@ class TraversableComposerTest extends \PHPUnit_Framework_TestCase
      */
     public function defineComposer_executeTerminalOpWithOptionAsResult()
     {
-        $max = TraversableComposer::forArray();
+        $max = FluentComposer::forArray();
         $max
             ->max()
             ->map(function($value){
@@ -116,8 +116,8 @@ class TraversableComposerTest extends \PHPUnit_Framework_TestCase
             ->orElse(Option::fromValue('max not found'))
             ->get();
 
-        $this->assertEquals('max: 5', $max->apply(array(1, 5, 3)));
-        $this->assertEquals('max not found', $max->apply(array()));
+        $this->assertEquals('max: 5', $max(array(1, 5, 3)));
+        $this->assertEquals('max not found', $max(array()));
     }
 }
  
