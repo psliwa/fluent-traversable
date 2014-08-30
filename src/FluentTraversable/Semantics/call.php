@@ -14,7 +14,7 @@ use FluentTraversable\Functions;
  *
  * @author Piotr Śliwa <peter.pl7@gmail.com>
  *
- * @deprecated Use {@link func#wrap()} instead
+ * @deprecated Use {@link func#fix()} instead
  */
 final class call
 {
@@ -22,7 +22,7 @@ final class call
      * @param $func
      * @return callable
      *
-     * @deprecated Use {@link func#wrap()} instead
+     * @deprecated Use {@link func#fix()} instead
      */
     public static function func($func)
     {
