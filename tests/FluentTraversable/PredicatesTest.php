@@ -292,6 +292,56 @@ class PredicatesTest extends \PHPUnit_Framework_TestCase
                 false,
             ),
             array(
+                Predicates::notFalse(),
+                false,
+                false
+            ),
+            array(
+                Predicates::notFalse(),
+                1,
+                true
+            ),
+            array(
+                Predicates::notFalse('awesome'),
+                array('awesome' => false),
+                false,
+            ),
+            array(
+                Predicates::notFalse('awesome'),
+                array('awesome' => 0),
+                true,
+            ),
+            array(
+                Predicates::falsy('awesome'),
+                array('awesome' => false),
+                true,
+            ),
+            array(
+                Predicates::falsy('awesome'),
+                array('awesome' => 0),
+                true,
+            ),
+            array(
+                Predicates::falsy('awesome'),
+                array('awesome' => true),
+                false,
+            ),
+            array(
+                Predicates::falsy(),
+                false,
+                true,
+            ),
+            array(
+                Predicates::falsy(),
+                0,
+                true,
+            ),
+            array(
+                Predicates::falsy(),
+                true,
+                false,
+            ),
+            array(
                 Predicates::true('awesome'),
                 array('awesome' => false),
                 false,
@@ -319,6 +369,71 @@ class PredicatesTest extends \PHPUnit_Framework_TestCase
             array(
                 Predicates::true(),
                 true,
+                true,
+            ),
+            array(
+                Predicates::notTrue('awesome'),
+                array('awesome' => 1),
+                true,
+            ),
+            array(
+                Predicates::notTrue('awesome'),
+                array('awesome' => true),
+                false,
+            ),
+            array(
+                Predicates::notTrue(),
+                true,
+                false,
+            ),
+            array(
+                Predicates::notTrue(),
+                false,
+                true,
+            ),
+            array(
+                Predicates::truthy('awesome'),
+                array('awesome' => false),
+                false,
+            ),
+            array(
+                Predicates::truthy('awesome'),
+                array('awesome' => 0),
+                false,
+            ),
+            array(
+                Predicates::truthy('awesome'),
+                array('awesome' => 1),
+                true,
+            ),
+            array(
+                Predicates::truthy('awesome'),
+                array('awesome' => true),
+                true,
+            ),
+            array(
+                Predicates::truthy(),
+                false,
+                false,
+            ),
+            array(
+                Predicates::truthy(),
+                0,
+                false,
+            ),
+            array(
+                Predicates::truthy(),
+                1,
+                true,
+            ),
+            array(
+                Predicates::truthy(),
+                true,
+                true,
+            ),
+            array(
+                Predicates::truthy(),
+                new \stdClass(),
                 true,
             ),
             array(

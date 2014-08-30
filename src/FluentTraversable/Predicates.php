@@ -63,14 +63,70 @@ class Predicates
         return self::not(call_user_func_array(array(__CLASS__, 'identical'), func_get_args()));
     }
 
+    /**
+     * Strict false predicate
+     *
+     * @param $property
+     * @return callable
+     */
     public static function false($property = null)
     {
         return self::identical($property, false);
     }
 
+    /**
+     * Strict not false predicate
+     *
+     * @param $property
+     * @return callable
+     */
+    public static function notFalse($property = null)
+    {
+        return self::not(self::false($property));
+    }
+
+    /**
+     * Not strict false predicate
+     *
+     * @param $property
+     * @return callable
+     */
+    public static function falsy($property = null)
+    {
+        return self::eq($property, false);
+    }
+
+    /**
+     * Strict true predicate
+     *
+     * @param $property
+     * @return callable
+     */
     public static function true($property = null)
     {
         return self::identical($property, true);
+    }
+
+    /**
+     * Strict not true predicate
+     *
+     * @param $property
+     * @return callable
+     */
+    public static function notTrue($property = null)
+    {
+        return self::not(self::true($property));
+    }
+
+    /**
+     * Not strict true predicate
+     *
+     * @param $property
+     * @return callable
+     */
+    public static function truthy($property = null)
+    {
+        return self::eq($property, true);
     }
 
     public static function gt($property, $value = null)
