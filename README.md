@@ -464,7 +464,7 @@ better and more readable way is just to use closure.
 
 > **IMPORTANT**
 >
-> Predicates can also be used with **grouping functions**. Now there is only `count::of()` function.
+> Predicates can also be used with **grouping functions**. Now there is only `size::of()` function.
 >  
 > Example:
 > 
@@ -475,7 +475,7 @@ better and more readable way is just to use closure.
 >     $doctors = array(...);
 >     
 >     $doctors = FluentTraversable::from($doctors)
->         ->filter(is::lt(count::of('patients'), 5))
+>         ->filter(is::lt(size::of('patients'), 5))
 >         ->toArray();
 > 
 > ```

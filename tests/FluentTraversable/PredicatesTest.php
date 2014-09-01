@@ -4,7 +4,7 @@
 namespace FluentTraversable;
 
 
-use FluentTraversable\Semantics\count;
+use FluentTraversable\Semantics\size;
 use FluentTraversable\Semantics\get;
 
 class PredicatesTest extends \PHPUnit_Framework_TestCase
@@ -27,7 +27,7 @@ class PredicatesTest extends \PHPUnit_Framework_TestCase
                 true,
             ),
             array(
-                Predicates::eq(count::of('values'), 2),
+                Predicates::eq(size::of('values'), 2),
                 array('values' => array(1, 2)),
                 true,
             ),

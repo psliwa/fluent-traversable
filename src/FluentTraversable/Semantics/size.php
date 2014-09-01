@@ -10,7 +10,7 @@ use FluentTraversable\Functions;
  *
  * @author Piotr Śliwa <peter.pl7@gmail.com>
  */
-class count
+class size
 {
     public static function of($property = null)
     {
