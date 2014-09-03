@@ -4,6 +4,9 @@
 namespace FluentTraversable;
 
 
+use PhpOption\None;
+use PhpOption\Some;
+
 class FunctionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -20,6 +23,8 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
         return array(
             //it uses PropertyGetter, so more detailed tests are unnecessary
             array(Functions::getPropertyValue('name'), array('name' => 'Piotr'), 'Piotr'),
+            array(Functions::getPropertyOptionValue('name'), array('name' => 'Piotr'), Some::create('Piotr')),
+            array(Functions::getPropertyOptionValue('unexisted'), array('name' => 'Piotr'), None::create()),
         );
     }
 

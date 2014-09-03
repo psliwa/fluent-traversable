@@ -252,6 +252,36 @@ available without using `if` statement:
 > `Option` has `getOrElse` method, so you can eventually use it to grab the value or default value. However I recommend
 > you to learn how to properly use this pattern, in literature it is also called `Maybe` or `Optional` pattern.
 
+
+> **IMPORTANT**
+>
+> When you want to use `Option::map` function, be aware when provided mapping function returns `null`, `map` function will
+> return `Some(null)` (not `None()`) - that could be undesirable. Example below is not correct if `$patientRepo::find()`
+> method might return `null`:
+>
+> ```php
+> Option::fromValue($patientId)
+>   ->map([$patientRepo,'find'])
+>   //there could be `Some(null)` value! 
+>   ->map(get::value('doctor.phone'))
+>   //there could be also `Some(null)` value, so `null` might be passed to `$this::callToDoctor`
+>   ->each([$this,'callToDoctor']);
+> ```
+>
+> When you want to transform value wrapped by `Option` and mapping function could return `null` you should use `flatMap`
+> and `get::option()` combo. There is correct example:
+>
+> ```php
+> Option::fromArrayValue($patientId)
+>   ->flatMap(get::option([$patientRepo,'find']))
+>   //when `$this::callToDoctor` return `null` there will be `None`
+>   ->flatMap(get::option('doctor.phone'))
+>   //when doctor has not phone set, there will be `None` value
+>   ->each([$this,'callToDoctor']);
+> ```
+> 
+> `get::option` is similar to `get::value`, the difference is it wraps value in `Option` type.
+
 <a name="composer"></a>
 ## FluentComposer
 

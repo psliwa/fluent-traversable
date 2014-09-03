@@ -4,6 +4,7 @@
 namespace FluentTraversable;
 
 use FluentTraversable\Internal\PropertyGetter;
+use PhpOption\Option;
 
 /**
  * Factory for general purpose functions
@@ -17,6 +18,14 @@ class Functions
         $propertyGetter = new PropertyGetter();
         return function($object) use($property, $propertyGetter){
             return $propertyGetter->getValue($object, $property);
+        };
+    }
+
+    public static function getPropertyOptionValue($property)
+    {
+        $getter = self::getPropertyValue($property);
+        return function($object) use($getter){
+            return Option::fromValue($getter($object));
         };
     }
 
