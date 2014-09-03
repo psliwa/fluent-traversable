@@ -14,7 +14,7 @@ use FluentTraversable\Functions;
  *
  * @author Piotr Śliwa <peter.pl7@gmail.com>
  *
- * @deprecated Use {@link func#fix()} instead
+ * @deprecated Use {@link func#fix()} instead. It will be removed in 1.0.0 version.
  */
 final class call
 {

@@ -8,7 +8,7 @@ namespace FluentTraversable;
  *
  * @author Piotr Śliwa <peter.pl7@gmail.com>
  *
- * @deprecated Use {@link FluentComposer} instead
+ * @deprecated Use {@link FluentComposer} instead. It will be removed in 1.0.0 version.
  */
 class TraversableComposer extends FluentComposer
 {

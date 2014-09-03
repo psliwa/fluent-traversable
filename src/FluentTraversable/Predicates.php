@@ -178,7 +178,17 @@ class Predicates
 
     public static function andX($predicate1, $predicate2 = null)
     {
-        $predicates = FluentTraversable::from(func_get_args());
+        /**
+         * @var FluentTraversable $predicates
+         * @var FluentTraversable $values
+         */
+        list($predicates, $values) = self::partitionPredicatesAndValues(func_get_args());
+
+        if($values->anyMatch(self::notTrue())) {
+            return function(){
+                return false;
+            };
+        }
 
         return function($object) use($predicates) {
             return $predicates->allMatch(function($predicate) use($object){
@@ -187,15 +197,45 @@ class Predicates
         };
     }
 
+    /**
+     * Alias to {@link Predicates#andX()}
+     *
+     * @see andX
+     */
+    public static function allTrue($predicate1, $predicate2 = null)
+    {
+        return call_user_func_array(array(__CLASS__, 'andX'), func_get_args());
+    }
+
     public static function orX($predicate1, $predicate2 = null)
     {
-        $predicates = FluentTraversable::from(func_get_args());
+        /**
+         * @var FluentTraversable $predicates
+         * @var FluentTraversable $values
+         */
+        list($predicates, $values) = self::partitionPredicatesAndValues(func_get_args());
+
+        if($values->anyMatch(self::true())) {
+            return function(){
+                return true;
+            };
+        }
 
         return function($object) use($predicates) {
             return $predicates->anyMatch(function($predicate) use($object){
                 return $predicate($object);
             });
         };
+    }
+
+    /**
+     * Alias to {@link Predicates#orX()}
+     *
+     * @see orX
+     */
+    public static function anyTrue($predicate1, $predicate2 = null)
+    {
+        return call_user_func_array(array(__CLASS__, 'orX'), func_get_args());
     }
 
     public static function in($property, $values = null)
@@ -248,5 +288,17 @@ class Predicates
     public static function notBlank($property = null)
     {
         return self::not(self::blank($property));
+    }
+
+    private static function partitionPredicatesAndValues(array $arguments)
+    {
+        return FluentTraversable::from($arguments)
+            ->partition(function ($arg) {
+                return is_callable($arg);
+            })
+            ->map(function (array $elements) {
+                return FluentTraversable::from($elements);
+            })
+            ->toMap();
     }
 }

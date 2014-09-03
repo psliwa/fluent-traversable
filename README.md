@@ -118,7 +118,7 @@ The same code using `FluentTraversable`:
         ->filter(is::lt('releaseDate', 2007))
         ->flatMap(get::value('authors'))
         ->filter(is::eq('sex', 'male'))
-        ->map(get::value('email')))
+        ->map(get::value('email'))
         ->filter(is::notNull())
         ->toArray();       
 
@@ -459,8 +459,20 @@ Few predicates (`null`, `notNull`, `false`, `true`, `blank`, `notBlank`) have al
     
     ```
     
-There are also logical predicates (`not`, `andX`, `orX`), but when you need to create complex predicate maybe the
-better and more readable way is just to use closure.
+There are also logical predicates (`not`, `allTrue` - logical and, `anyTrue` - logical or), but when you need to create 
+complex predicate maybe the better and more readable way is just to use closure. `allTrue` and `anyTrue` accepts also 
+evaluated values, for example:
+
+```php
+
+    $alwaysFalse = is::allTrue(false, is::eq(25));
+    $alwaysTrue = is::anyTrue(true, is::eq(25));
+
+```
+
+Evaluated values could be useful when filtering of some values depends on external condition and you don't want to use
+separate `if` statement because of readability purpose - of course if your array is really big, be aware the iteration 
+through all elements will be done, so be carefully and use that feature consciously.
 
 > **IMPORTANT**
 >

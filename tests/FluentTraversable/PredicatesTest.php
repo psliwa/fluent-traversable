@@ -182,29 +182,59 @@ class PredicatesTest extends \PHPUnit_Framework_TestCase
                 false,
             ),
             array(
-                Predicates::andX(Predicates::eq('name', 'Piotr'), Predicates::eq('age', 100)),
+                Predicates::allTrue(Predicates::eq('name', 'Piotr'), Predicates::eq('age', 100)),
                 array('name' => 'Piotr', 'age' => 100),
                 true,
             ),
             array(
-                Predicates::andX(Predicates::eq('name', 'Piotr'), Predicates::eq('age', 101)),
+                Predicates::allTrue(Predicates::eq('name', 'Piotr'), Predicates::eq('age', 100), false),
                 array('name' => 'Piotr', 'age' => 100),
                 false,
             ),
             array(
-                Predicates::orX(Predicates::eq('name', 'Piotr'), Predicates::eq('age', 100)),
+                Predicates::allTrue(Predicates::eq('name', 'Piotr'), Predicates::eq('age', 100), true),
                 array('name' => 'Piotr', 'age' => 100),
                 true,
             ),
             array(
-                Predicates::orX(Predicates::eq('name', 'Piotr'), Predicates::eq('age', 101)),
-                array('name' => 'Piotr', 'age' => 100),
-                true,
-            ),
-            array(
-                Predicates::orX(Predicates::eq('name', 'Piotr2'), Predicates::eq('age', 101)),
+                Predicates::allTrue(Predicates::eq('name', 'Piotr'), Predicates::eq('age', 101)),
                 array('name' => 'Piotr', 'age' => 100),
                 false,
+            ),
+            array(
+                Predicates::anyTrue(Predicates::eq('name', 'Piotr'), Predicates::eq('age', 100)),
+                array('name' => 'Piotr', 'age' => 100),
+                true,
+            ),
+            array(
+                Predicates::anyTrue(Predicates::eq('name', 'Piotr'), Predicates::eq('age', 100), false),
+                array('name' => 'Piotr', 'age' => 100),
+                true,
+            ),
+            array(
+                Predicates::anyTrue(Predicates::eq('name', 'Piotr'), Predicates::eq('age', 100), true),
+                array('name' => 'Piotr', 'age' => 100),
+                true,
+            ),
+            array(
+                Predicates::anyTrue(Predicates::eq('name', 'Piotr'), Predicates::eq('age', 101)),
+                array('name' => 'Piotr', 'age' => 100),
+                true,
+            ),
+            array(
+                Predicates::anyTrue(Predicates::eq('name', 'Piotr2'), Predicates::eq('age', 101)),
+                array('name' => 'Piotr', 'age' => 100),
+                false,
+            ),
+            array(
+                Predicates::anyTrue(Predicates::eq('name', 'Piotr2'), Predicates::eq('age', 101), false),
+                array('name' => 'Piotr', 'age' => 100),
+                false,
+            ),
+            array(
+                Predicates::anyTrue(Predicates::eq('name', 'Piotr2'), Predicates::eq('age', 101), true),
+                array('name' => 'Piotr', 'age' => 100),
+                true,
             ),
             array(
                 Predicates::in('age', array(10, 15, 30)),

@@ -10,7 +10,7 @@ use FluentTraversable\FluentComposer;
  *
  * @author Piotr Śliwa <peter.pl7@gmail.com>
  *
- * @deprecated Use {@link FluentTraversable\FluentComposer} instead
+ * @deprecated Use {@link FluentTraversable\FluentComposer} instead. It will be removed in 1.0.0 version.
  */
 final class compose
 {
