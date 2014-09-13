@@ -703,6 +703,26 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(1, 2, 3), $result->arg1);
     }
 
+    public function testZip_givenShorterTraversable_useNullOnMissingKeys()
+    {
+        $result = FluentTraversable::from(array(1, 2, 3))
+            ->zip(array('a', 2 => 'c'))
+            ->toMap();
+
+        $this->assertEquals(array(array(1, 'a'), array(2, null), array(3, 'c')), $result);
+    }
+
+    public function testZip_givenCombiningFunction_useTheFunctionToCombineValues()
+    {
+        $result = FluentTraversable::from(array(1, 2, 3))
+            ->zip(array('a', 2 => 'c'), function($a, $b){
+                return $a.$b;
+            })
+            ->toMap();
+
+        $this->assertEquals(array('1a', '2', '3c'), $result);
+    }
+
     /**
      * @test
      * @dataProvider orderByProvider
@@ -747,6 +767,10 @@ class FluentTraversableTest extends \PHPUnit_Framework_TestCase
                 function($value){
                     return $value;
                 },
+            ),
+            array(
+                'zip',
+                array(1, 2, 3),
             ),
             array(
                 'filter',

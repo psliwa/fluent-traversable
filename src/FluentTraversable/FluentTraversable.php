@@ -361,6 +361,31 @@ class FluentTraversable implements TraversableFlow
         return $this;
     }
 
+    /**
+     * @inheritdoc
+     *
+     * @return FluentTraversable
+     */
+    public function zip($traversable, $func = null)
+    {
+        InvalidArgumentException::assertCallbackIfNotNull($func, __METHOD__);
+
+        $func = $func ?: function($a, $b){
+            return array($a, $b);
+        };
+
+        $collection = self::from($traversable)
+            ->toMap();
+
+        foreach($this->elements as $index => &$value) {
+            $value = call_user_func($func, $value, isset($collection[$index]) ? $collection[$index] : null);
+        }
+
+        reset($this->elements);
+
+        return $this;
+    }
+
     //terminal operations
 
     /**

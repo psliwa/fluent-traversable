@@ -220,6 +220,30 @@ interface TraversableFlow
      */
     public function keys();
 
+    /**
+     * Combines elements with given traversable
+     *
+     * Example:
+     * <code>
+     *      $result = FluentTraversable::from(array(1, 2, 3))
+     *          ->zip(array('a', 'b', 'c'))
+     *          ->toMap();
+     *      //array(array(1, 'a'), array(2, 'b'), array(3, 'c'))
+     *
+     *      //or when $func is provided
+     *
+     *      $result = FluentTraversable::from(array(1, 2, 3), function($a, $b) { return $a.$b; })
+     *          ->zip(array('a', 'b', 'c'))
+     *          ->toMap();
+     *      //array('1a', '2b', '3c')
+     * </code>
+     *
+     * @param $traversable
+     * @param callable $func
+     * @return TraversableFlow
+     */
+    public function zip($traversable, $func = null);
+
     //terminal operations
 
     /**

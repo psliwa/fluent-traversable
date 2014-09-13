@@ -273,6 +273,20 @@ class FluentComposer implements TraversableFlow
      *
      * @return FluentComposer
      */
+    public function zip($traversable, $func = null)
+    {
+        $this->checkTerminalOperation();
+
+        $this->operations[] = array(__FUNCTION__, func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @return FluentComposer
+     */
     public function append($element)
     {
         $this->checkTerminalOperation();
