@@ -90,6 +90,12 @@ class PropertyGetterTest extends \PHPUnit_Framework_TestCase
                 new \ArrayObject(array('name' => 'value')),
                 'name',
                 'value',
+            ),
+            //"key" is a function
+            array(
+                array('key' => 'value'),
+                'key',
+                'value'
             )
         );
     }

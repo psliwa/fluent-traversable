@@ -14,7 +14,7 @@ class PropertyGetter
     public function getValue($object, $path)
     {
         if($path === null) return $object;
-        if(is_callable($path)) return call_user_func($path, $object);
+        if(!is_string($path) && is_callable($path)) return call_user_func($path, $object);
 
         $properties = explode('.', $path);
 
