@@ -22,7 +22,7 @@ final class call
      * @param $func
      * @return callable
      *
-     * @deprecated Use {@link func#fix()} instead
+     * @deprecated Use {@link func#unary()} instead
      */
     public static function func($func)
     {

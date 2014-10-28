@@ -38,7 +38,7 @@ To fully enjoy of this library, knowledge of basic functional patterns is welcom
         ->map(
             FluentComposer::forArray()
                 ->partition(is::eq('sex', 'female'))
-                ->map(func::fix('count'))
+                ->map(func::unary('count'))
                 ->collect(function($elements){
                     list($femalesCount, $malesCount) = $elements;
                     return $femalesCount / ($femalesCount + $malesCount) * 100;
@@ -173,13 +173,13 @@ Nested paths in predicates and `get::value` function are supported, so this code
 >         //result will be: array('a' => 'Aa', 'b' => 'Bb')
 > ```
 > 
-> When you won't index to be passed as second argument, you could use `func::fix($func)` function. It is very helpful
+> When you won't index to be passed as second argument, you could use `func::unary($func)` function. It is very helpful
 > especially when you want to use php build-in function that has optional second argument with different meaning, for 
 > example `str_split`:
 > 
 > ```php
 >     FluentTraversable::from(array('some', 'values'))
->         ->flatMap(func::fix('str_split'))
+>         ->flatMap(func::unary('str_split'))
 >         ->toArray();
 >         //result will be: array('s', 'o', 'm', 'e', 'v', 'a', 'l', 'u', 'e')
 > ```
@@ -390,7 +390,7 @@ Example:
                 //split array of patients into two arrays, first females, second males
                 ->partition(is::eq('sex', 'female'))
                 //map those arrays to its size, so we have number of females and males
-                ->map(func::fix('count'))
+                ->map(func::unary('count'))
                 //calculate a percent
                 ->collect(function($elements){
                     list($femalesCount, $malesCount) = $elements;
