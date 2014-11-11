@@ -21,11 +21,11 @@ class Functions
         };
     }
 
-    public static function getPropertyOptionValue($property)
+    public static function getPropertyOptionValue($property, $nullValue = null)
     {
         $getter = self::getPropertyValue($property);
-        return function($object) use($getter){
-            return Option::fromValue($getter($object));
+        return function($object) use($getter, $nullValue){
+            return Option::fromValue($getter($object), $nullValue);
         };
     }
 

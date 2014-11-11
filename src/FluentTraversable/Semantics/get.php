@@ -17,8 +17,8 @@ final class get
         return Functions::getPropertyValue($property);
     }
 
-    public static function option($property)
+    public static function option($property, $nullValue = null)
     {
-        return Functions::getPropertyOptionValue($property);
+        return Functions::getPropertyOptionValue($property, $nullValue);
     }
 }

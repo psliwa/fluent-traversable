@@ -25,6 +25,8 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
             array(Functions::getPropertyValue('name'), array('name' => 'Piotr'), 'Piotr'),
             array(Functions::getPropertyOptionValue('name'), array('name' => 'Piotr'), Some::create('Piotr')),
             array(Functions::getPropertyOptionValue('unexisted'), array('name' => 'Piotr'), None::create()),
+            array(Functions::getPropertyOptionValue('existedButFalse'), array('existedButFalse' => false), Some::create(false)),
+            array(Functions::getPropertyOptionValue('existedButFalse', false), array('existedButFalse' => false), None::create()),
         );
     }
 
